@@ -18,7 +18,6 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "hello world"
           echo "${{ secrets.ENV }}" > .env 
 
       - name: Build and run containers
