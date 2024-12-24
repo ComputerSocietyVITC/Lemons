@@ -4,10 +4,14 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    types:
+      - closed
   workflow_dispatch:
 
 jobs:
   deploy:
+    if: github.event.pull_request.merged == true
     runs-on: self-hosted
     steps:
       - name: Checkout repository
