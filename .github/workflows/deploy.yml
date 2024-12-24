@@ -11,7 +11,6 @@ on:
 
 jobs:
   deploy:
-    if: github.event.pull_request.merged == true
     runs-on: self-hosted
     steps:
       - name: Checkout repository
@@ -19,7 +18,7 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "${{ secrets.ENV }}" > .env
+          echo ${{ secrets.ENV }} > .env
       
 
       - name: Debug .env file
