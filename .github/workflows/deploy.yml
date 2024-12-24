@@ -21,6 +21,7 @@ jobs:
         run: |
           echo "${{ secrets.ENV }}" > .env
       
+
       - name: Debug .env file
         run: cat .env
 
