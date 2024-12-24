@@ -1,0 +1,40 @@
+{
+  "name": "hono-api-template",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "rm -rf dist/ && tsc",
+    "start": "node dist/index.js",
+    "generate": "prisma generate",
+    "lint": "eslint src --ext .ts",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.7",
+    "@hono/zod-validator": "^0.4.2",
+    "@prisma/client": "^6.1.0",
+    "hono": "^4.6.14",
+    "jsonwebtoken": "^9.0.2",
+    "minio": "^8.0.3"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^20.17.10",
+    "bcrypt": "^5.1.1",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.14.0",
+    "husky": "^9.1.7",
+    "jsonwebtoken\u001bOA": "link:@types/jsonwebtoken\u001bOA",
+    "lint-staged": "^15.2.11",
+    "prettier": "^3.4.2",
+    "prisma": "^6.1.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1",
+    "uuid": "^11.0.3",
+    "zod": "^3.24.1"
+  }
+}

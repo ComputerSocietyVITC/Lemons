@@ -1,0 +1,23 @@
+name: Deploy on Push
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Create .env file
+        run: |
+          echo "${{ secrets.ENV }}" > .env
+
+      - name: Build and run containers
+        run: |
+          docker-compose down
+          docker-compose up --build -d

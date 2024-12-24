@@ -1,0 +1,16 @@
+node_modules
+dist
+build
+.eslintignore
+.gitignore
+pre-commit
+.prettierignore
+schema.prisma
+Dockerfile
+docker-compose.yml
+.env.copy
+.env
+deploy.yml
+migration.sql
+migration_lock.toml
+init.sh
