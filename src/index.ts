@@ -23,6 +23,12 @@ app.doc("/openapi", {
   },
 });
 
+app.openAPIRegistry.registerComponent("securitySchemes", "Bearer", {
+  type: "http",
+  scheme: "bearer",
+  bearerFormat: "JWT",
+});
+
 app.get("/docs", swaggerUI({ url: "/openapi" }));
 
 serve({
