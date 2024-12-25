@@ -21,4 +21,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           script: |
-            echo "hello world"
+            cd ${{ secrets.PROJECT_PATH }}
+            git pull origin master
+            docker-compose down
+            docker-compose up --build -d
