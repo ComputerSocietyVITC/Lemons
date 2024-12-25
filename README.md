@@ -36,12 +36,63 @@ The all in one hono api template with prisma, postgresql and minio s3 bucket set
 │   │   └── s3-client.ts
 │   ├── routes
 │   │   └── auth
+│   │       ├── index.ts
+│   │       └── routes.ts
 │   └── utils
 │       └── passwords.ts
 └── tsconfig.json
 ```
 
 ## Whats included
+
+### Swagger Docs served at /docs
+
+1. Each route should be inside `/src/routes/<route-folder>/`
+2. Each `/<route-folder>/` should include 2 files
+
+   1. `routes.ts`
+
+      - here define the openapi specs for all your routes in this format
+
+        ```ts
+        export const <route-name> = createRoute({
+          method: "",
+          path: "/<route-name>",
+          request: {
+            query: z.object({
+            }),
+          },
+          responses: {
+            200: {
+              description: "",
+              content: {
+                "application/json": {
+                  schema: z.object({}).openapi("<route-name>Response"),
+                },
+              },
+            },
+            ...
+          },
+        });
+        ```
+
+   2. `index.ts`
+
+      - import your route specs here and define functionality
+
+        ```ts
+        const <main-router-name>Router = new OpenAPIHono();
+
+        <main-router-name>Router.openapi(<imported-router>, async (ctx) => {
+          const {  } = ctx.req.valid("query");
+
+          return new Response("<description>", {
+            status: ,
+          });
+        });
+        ```
+
+3. include defined router in `/src/index.ts`
 
 ### Prisma Role Base Auth
 
@@ -108,15 +159,17 @@ Retrieves a document from the MinIO server using its unique document ID.
   `docId (string)`: The unique ID of the document.
 
 - Returns:
+
   - `Promise<{ data: Buffer; contentType: string; }>`: An object containing:
+
     - `data (Buffer)`: The document's content.
     - `contentType (string)`: The MIME type of the document.
 
-```ts
-const doc = await readDocument(docId);
-console.log("Document content type:", doc.contentType);
-console.log("Document data:", doc.data.toString());
-```
+    ```ts
+    const doc = await readDocument(docId);
+    console.log("Document content type:", doc.contentType);
+    console.log("Document data:", doc.data.toString());
+    ```
 
 3. `deleteDocument(docId: string): Promise<void>`
 
@@ -127,12 +180,13 @@ Deletes a document from the MinIO server using its unique document ID.
   - `docId (string)`: The unique ID of the document to delete.
 
 - Returns:
+
   - `Promise<void>`: Resolves once the document is successfully deleted.
 
-```ts
-await deleteDocument(docId);
-console.log("Document deleted successfully");
-```
+    ```ts
+    await deleteDocument(docId);
+    console.log("Document deleted successfully");
+    ```
 
 ### Auth Routes
 
@@ -143,15 +197,16 @@ The authentication module provides routes for user login and registration, utili
 Authenticates a user and returns a JWT for accessing protected resources.
 
 - **Request Body (JSON)**
+
   - `email (string)`: The user's email. Must be a valid email address.
   - `password (string)`: The user's password. Must be at least 8 characters.
 
-```json
-{
-  "email": "user@example.com",
-  "password": "securepassword"
-}
-```
+    ```json
+    {
+      "email": "user@example.com",
+      "password": "securepassword"
+    }
+    ```
 
 - **Responses**
   - 200 OK
@@ -166,19 +221,20 @@ Authenticates a user and returns a JWT for accessing protected resources.
 Registers a new user by creating entries in the `Auth` and `User` models.
 
 - **Request Body (JSON)**
+
   - `email (string)`: The user's email. Must be a valid email address.
   - `password (string)`: The user's password. Must be at least 8 characters.
   - `name (string)`: Full name of the user.
   - `role (string)`: Role of the user (ADMIN or USER).
 
-```json
-{
-  "name": "John Doe",
-  "role": "USER",
-  "email": "user@example.com",
-  "password": "securepassword"
-}
-```
+    ```json
+    {
+      "name": "John Doe",
+      "role": "USER",
+      "email": "user@example.com",
+      "password": "securepassword"
+    }
+    ```
 
 - **Responses**
   - 201 Created
