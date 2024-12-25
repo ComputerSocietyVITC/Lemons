@@ -10,9 +10,12 @@ importers:
       "@hono/node-server":
         specifier: ^1.13.7
         version: 1.13.7(hono@4.6.14)
-      "@hono/zod-validator":
-        specifier: ^0.4.2
-        version: 0.4.2(hono@4.6.14)(zod@3.24.1)
+      "@hono/swagger-ui":
+        specifier: ^0.5.0
+        version: 0.5.0(hono@4.6.14)
+      "@hono/zod-openapi":
+        specifier: ^0.18.3
+        version: 0.18.3(hono@4.6.14)(zod@3.24.1)
       "@prisma/client":
         specifier: ^6.1.0
         version: 6.1.0(prisma@6.1.0)
@@ -77,11 +80,16 @@ importers:
       uuid:
         specifier: ^11.0.3
         version: 11.0.3
-      zod:
-        specifier: ^3.24.1
-        version: 3.24.1
 
 packages:
+  "@asteasolutions/zod-to-openapi@7.3.0":
+    resolution:
+      {
+        integrity: sha512-7tE/r1gXwMIvGnXVUdIqUhCU1RevEFC4Jk6Bussa0fk1ecbnnINkZzj1EOAJyE/M3AI25DnHT/zKQL1/FPFi8Q==,
+      }
+    peerDependencies:
+      zod: ^3.20.2
+
   "@esbuild/aix-ppc64@0.23.1":
     resolution:
       {
@@ -364,6 +372,24 @@ packages:
     engines: { node: ">=18.14.1" }
     peerDependencies:
       hono: ^4
+
+  "@hono/swagger-ui@0.5.0":
+    resolution:
+      {
+        integrity: sha512-MWYYSv9kC8IwFBLZdwgZZMT9zUq2C/4/ekuyEYOkHEgUMqu+FG3eebtBZ4ofMh60xYRxRR2BgQGoNIILys/PFg==,
+      }
+    peerDependencies:
+      hono: "*"
+
+  "@hono/zod-openapi@0.18.3":
+    resolution:
+      {
+        integrity: sha512-bNlRDODnp7P9Fs13ZPajEOt13G0XwXKfKRHMEFCphQsFiD1Y+twzHaglpNAhNcflzR1DQwHY92ZS06b4LTPbIQ==,
+      }
+    engines: { node: ">=16.0.0" }
+    peerDependencies:
+      hono: ">=4.3.6"
+      zod: 3.*
 
   "@hono/zod-validator@0.4.2":
     resolution:
@@ -1820,6 +1846,12 @@ packages:
       }
     engines: { node: ">=18" }
 
+  openapi3-ts@4.4.0:
+    resolution:
+      {
+        integrity: sha512-9asTNB9IkKEzWMcHmVZE7Ts3kC9G7AFHfs8i7caD8HbI76gEjdkId4z/AkP83xdZsH7PLAnnbl47qZkXuxpArw==,
+      }
+
   optionator@0.9.4:
     resolution:
       {
@@ -2390,6 +2422,11 @@ packages:
       }
 
 snapshots:
+  "@asteasolutions/zod-to-openapi@7.3.0(zod@3.24.1)":
+    dependencies:
+      openapi3-ts: 4.4.0
+      zod: 3.24.1
+
   "@esbuild/aix-ppc64@0.23.1":
     optional: true
 
@@ -2506,6 +2543,17 @@ snapshots:
   "@hono/node-server@1.13.7(hono@4.6.14)":
     dependencies:
       hono: 4.6.14
+
+  "@hono/swagger-ui@0.5.0(hono@4.6.14)":
+    dependencies:
+      hono: 4.6.14
+
+  "@hono/zod-openapi@0.18.3(hono@4.6.14)(zod@3.24.1)":
+    dependencies:
+      "@asteasolutions/zod-to-openapi": 7.3.0(zod@3.24.1)
+      "@hono/zod-validator": 0.4.2(hono@4.6.14)(zod@3.24.1)
+      hono: 4.6.14
+      zod: 3.24.1
 
   "@hono/zod-validator@0.4.2(hono@4.6.14)(zod@3.24.1)":
     dependencies:
@@ -3385,6 +3433,10 @@ snapshots:
   onetime@7.0.0:
     dependencies:
       mimic-function: 5.0.1
+
+  openapi3-ts@4.4.0:
+    dependencies:
+      yaml: 2.6.1
 
   optionator@0.9.4:
     dependencies:
