@@ -23,7 +23,6 @@ export const middleware = async (ctx: Context, next: Next) => {
     ) as JWTPayload;
 
     ctx.set("user", decoded);
-    ctx.set("role", decoded.role);
     await next();
   } catch {
     ctx.status(401);
@@ -33,7 +32,7 @@ export const middleware = async (ctx: Context, next: Next) => {
 };
 
 export const checkRole = (roles: Role[], ctx: Context) => {
-  if (!roles.includes(ctx.get("role"))) {
+  if (!roles.includes(ctx.get("user").role)) {
     return false;
   }
 
