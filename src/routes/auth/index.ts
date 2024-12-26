@@ -21,8 +21,7 @@ authRouter.openapi(login, async (ctx) => {
   });
 
   if (!auth) {
-    ctx.status(404);
-    return ctx.text("User not found");
+    return ctx.text("User not found", 404);
   }
 
   const truePassword = await checkPassword(password, auth?.password);
@@ -38,14 +37,15 @@ authRouter.openapi(login, async (ctx) => {
       process.env.JWT_SECRET as string,
       { expiresIn: "2h" }
     );
-    ctx.status(200);
-    return ctx.json({
-      token: token,
-      userId: auth.id,
-    });
+    return ctx.json(
+      {
+        token: token,
+        userId: auth.id,
+      },
+      200
+    );
   } else {
-    ctx.status(403);
-    return ctx.text("Invalid password");
+    return ctx.text("Invalid password", 403);
   }
 });
 
@@ -59,8 +59,7 @@ authRouter.openapi(register, async (ctx) => {
   });
 
   if (existingUser) {
-    ctx.status(409);
-    return ctx.text("User already exists");
+    return ctx.text("User already exists", 409);
   }
 
   const hashedPassword = await hashPassword(password);
@@ -85,10 +84,12 @@ authRouter.openapi(register, async (ctx) => {
     return auth;
   });
 
-  ctx.status(201);
-  return ctx.json({
-    userId: auth.id,
-  });
+  return ctx.json(
+    {
+      userId: auth.id,
+    },
+    201
+  );
 });
 
 export default authRouter;
