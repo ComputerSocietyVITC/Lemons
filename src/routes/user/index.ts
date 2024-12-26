@@ -4,14 +4,9 @@ import prisma from "./../../lib/prisma-client.js";
 import { getUser, getUserById } from "./routes.js";
 
 import { Role } from "@prisma/client";
-import {
-  middleware,
-  checkRole,
-  getCurrentUser,
-} from "../../lib/auth-provider.js";
+import { checkRole, getCurrentUser } from "../../lib/auth-provider.js";
 
 const userRouter = new OpenAPIHono();
-userRouter.use("/*", middleware);
 
 userRouter.openapi(getUser, async (ctx) => {
   const user = getCurrentUser(ctx);

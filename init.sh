@@ -1,3 +1,5 @@
 #!/bin/bash
-pnpm prisma migrate deploy
-pnpm run start
+pnpm dlx prisma migrate deploy
+pnpm dlx prisma generate
+pnpm dlx build
+pnpm dlx run start
