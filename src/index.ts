@@ -3,10 +3,12 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
 
 import authRouter from "./routes/auth/index.js";
+import userRouter from "./routes/user/index.js";
 
 const app = new OpenAPIHono();
 
 app.route("/auth", authRouter);
+app.route("/user", userRouter);
 
 app.get("/", (c) => {
   return c.text("Server is alive!");

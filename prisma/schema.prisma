@@ -10,23 +10,78 @@ datasource db {
 
 model Auth {
   id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  email     String   @unique
+  password  String
   user      User?
 }
 
 model User {
-  id     String @id @default(uuid())
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   authId String @unique
   auth   Auth   @relation(fields: [authId], references: [id], onDelete: Cascade)
 
   name String
   role Role
+
+  regNum  String  @unique
+  phone   String  @unique
+  college String
+  github  String? @unique
+  imageId String? @unique
+
+  isLeader Boolean @default(false)
+
+  team   Team?   @relation(fields: [teamId], references: [id])
+  teamId String?
+}
+
+model Team {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name    String  @unique
+  imageId String? @unique
+
+  members User[]
+  project Project?
+}
+
+model Project {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String  @unique
+  description String
+  imageId     String? @unique
+
+  team   Team   @relation(fields: [teamId], references: [id])
+  teamId String @unique
+
+  evaluations Evaluation[]
+}
+
+// only accessed by people with EVALUATOR role
+model Evaluation {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+
+  score Int @default(0)
 }
 
 enum Role {
-  ADMIN
-  USER
+  SUPER_ADMIN // Developer
+  ADMIN // OC Members
+  EVALUATOR // Actual evaluators
+  USER // Participants
 }
