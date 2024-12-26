@@ -6,7 +6,7 @@
     "build": "rm -rf dist/ && tsc",
     "start": "node dist/index.js",
     "generate": "prisma generate",
-    "lint": "eslint src --ext .ts",
+    "lint": "eslint src",
     "prepare": "husky"
   },
   "dependencies": {
