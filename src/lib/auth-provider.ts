@@ -26,8 +26,7 @@ export const middleware = async (ctx: Context, next: Next) => {
     await next();
   } catch {
     ctx.status(401);
-    ctx.json({ message: "Unauthorized - Invalid token" });
-    return;
+    return ctx.json({ message: "Unauthorized - Invalid token" });
   }
 };
 
