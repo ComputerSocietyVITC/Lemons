@@ -1,61 +1,45 @@
+import { Role } from "@prisma/client";
 import { Context, Next } from "hono";
 import jwt from "jsonwebtoken";
-import { Role } from "@prisma/client";
 
 interface JWTPayload {
   userId: string;
-  role: Role | undefined;
+  role: Role;
 }
 
-export const authMiddleware = async (ctx: Context, next: Next) => {
-  const authHeader = ctx.req.header("Authorization");
+export const middleware = async (ctx: Context, next: Next) => {
+  let authHeader = ctx.req.header("Authorization");
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return ctx.json({ message: "Unauthorized - No token provided" }, 401);
   }
 
-  const token = authHeader.split(" ")[1];
+  authHeader = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(
-      token,
+      authHeader,
       process.env.JWT_SECRET as string
     ) as JWTPayload;
 
     ctx.set("user", decoded);
+    ctx.set("role", decoded.role);
     await next();
   } catch {
-    return ctx.json({ message: "Unauthorized - Invalid token" }, 401);
+    ctx.status(401);
+    ctx.json({ message: "Unauthorized - Invalid token" });
+    return;
   }
 };
 
-export const requireRole = (allowedRoles: Role[]) => {
-  return async (ctx: Context, next: Next) => {
-    const user = ctx.get("user") as JWTPayload;
+export const checkRole = (roles: Role[], ctx: Context) => {
+  if (!roles.includes(ctx.get("role"))) {
+    return false;
+  }
 
-    if (!user.role || !allowedRoles.includes(user.role)) {
-      return ctx.json(
-        {
-          message: "Forbidden - Insufficient permissions",
-        },
-        403
-      );
-    }
-
-    await next();
-  };
+  return true;
 };
 
-export const refreshToken = async (ctx: Context) => {
-  const user = getCurrentUser(ctx);
-  const newToken = jwt.sign(
-    { userId: user.userId, role: user.role },
-    process.env.JWT_SECRET as string,
-    { expiresIn: "2h" }
-  );
-  return ctx.json({ token: newToken });
-};
-
-export const getCurrentUser = (ctx: Context): JWTPayload => {
+export const getCurrentUser = (ctx: Context) => {
   return ctx.get("user");
 };

@@ -57,8 +57,9 @@ model Project {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name    String  @unique
-  imageId String? @unique
+  name        String  @unique
+  description String
+  imageId     String? @unique
 
   team   Team   @relation(fields: [teamId], references: [id])
   teamId String @unique

@@ -5,10 +5,19 @@ export const login = createRoute({
   method: "post",
   path: "/login",
   request: {
-    query: z.object({
-      email: z.string().email().openapi({ example: "example@example.com" }),
-      password: z.string().min(8).openapi({ example: "password" }),
-    }),
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            email: z
+              .string()
+              .email()
+              .openapi({ example: "example@example.com" }),
+            password: z.string().min(8).openapi({ example: "password" }),
+          }),
+        },
+      },
+    },
   },
   responses: {
     200: {
@@ -45,15 +54,24 @@ export const register = createRoute({
   method: "post",
   path: "/register",
   request: {
-    query: z.object({
-      name: z.string().openapi({ example: "Example Name" }),
-      role: z.nativeEnum(Role).openapi({ example: "USER" }),
-      regNum: z.string().openapi({ example: "23BRS1369" }),
-      phone: z.string().openapi({ example: "1234567890" }),
-      college: z.string().openapi({ example: "Example College" }),
-      email: z.string().email().openapi({ example: "example@example.com" }),
-      password: z.string().min(8).openapi({ example: "password" }),
-    }),
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            name: z.string().openapi({ example: "Example Name" }),
+            role: z.nativeEnum(Role).openapi({ example: "USER" }),
+            regNum: z.string().openapi({ example: "23BRS1369" }),
+            phone: z.string().openapi({ example: "1234567890" }),
+            college: z.string().openapi({ example: "Example College" }),
+            email: z
+              .string()
+              .email()
+              .openapi({ example: "example@example.com" }),
+            password: z.string().min(8).openapi({ example: "password" }),
+          }),
+        },
+      },
+    },
   },
 
   responses: {

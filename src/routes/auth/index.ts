@@ -9,7 +9,7 @@ import { login, register } from "./routes.js";
 const authRouter = new OpenAPIHono();
 
 authRouter.openapi(login, async (ctx) => {
-  const { email, password } = ctx.req.valid("query");
+  const { email, password } = ctx.req.valid("json");
 
   const auth = await prisma.auth.findUnique({
     where: {
@@ -55,7 +55,7 @@ authRouter.openapi(login, async (ctx) => {
 
 authRouter.openapi(register, async (ctx) => {
   const { name, role, email, password, regNum, phone, college } =
-    ctx.req.valid("query");
+    ctx.req.valid("json");
 
   const existingUser = await prisma.auth.findUnique({
     where: {
@@ -87,6 +87,7 @@ authRouter.openapi(register, async (ctx) => {
         regNum,
         phone,
         college,
+        id: auth.id,
         authId: auth.id,
       },
     });
