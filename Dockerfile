@@ -25,8 +25,6 @@ COPY . .
 COPY init.sh .
 RUN chmod +x init.sh
 
-# Build the app (using TypeScript compiler)
-
 # Expose necessary ports
 EXPOSE 3000
 
