@@ -1,14 +1,13 @@
 import { Role } from "@prisma/client";
 import { Context, Next } from "hono";
-import jwt from "jsonwebtoken";
-
-interface JWTPayload {
-  userId: string;
-  role: Role;
-}
+import { verify } from "hono/jwt";
 
 export const middleware = async (ctx: Context, next: Next) => {
   let authHeader = ctx.req.header("Authorization");
+
+  if (!process.env.JWT_SECRET) {
+    return ctx.text("Internal server error", 500);
+  }
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return ctx.json({ message: "Unauthorized - No token provided" }, 401);
@@ -17,17 +16,13 @@ export const middleware = async (ctx: Context, next: Next) => {
   authHeader = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(
-      authHeader,
-      process.env.JWT_SECRET as string
-    ) as JWTPayload;
+    const decoded = await verify(authHeader, process.env.JWT_SECRET);
 
     ctx.set("user", decoded);
     await next();
   } catch {
     ctx.status(401);
-    ctx.json({ message: "Unauthorized - Invalid token" });
-    return;
+    return ctx.json({ message: "Unauthorized - Invalid token" });
   }
 };
 

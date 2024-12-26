@@ -1,7 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { v4 } from "uuid";
-import jwt from "jsonwebtoken";
-
+import { sign } from "hono/jwt";
 import prisma from "./../../lib/prisma-client.js";
 import { checkPassword, hashPassword } from "./../../utils/passwords.js";
 import { login, register } from "./routes.js";
@@ -10,6 +9,10 @@ const authRouter = new OpenAPIHono();
 
 authRouter.openapi(login, async (ctx) => {
   const { email, password } = ctx.req.valid("json");
+
+  if (!process.env.JWT_SECRET) {
+    return ctx.text("Internal server error", 500);
+  }
 
   const auth = await prisma.auth.findUnique({
     where: {
@@ -21,20 +24,19 @@ authRouter.openapi(login, async (ctx) => {
   });
 
   if (!auth) {
-    return ctx.text("User not found", 204);
+    return ctx.text("User not found", 404);
   }
 
   const truePassword = await checkPassword(password, auth?.password);
 
   if (truePassword) {
-    if (!process.env.JWT_SECRET) {
-      return ctx.text("Internal server error", 500);
-    }
-
-    const token = jwt.sign(
-      { userId: auth.id, role: auth.user?.role },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "2h" }
+    const token = await sign(
+      {
+        userId: auth.id,
+        role: auth.user?.role,
+        exp: Math.floor(Date.now() / 1000) + 60 * 60 * 2, // Token expires in 2h
+      },
+      process.env.JWT_SECRET
     );
 
     return ctx.json(
@@ -52,6 +54,10 @@ authRouter.openapi(login, async (ctx) => {
 authRouter.openapi(register, async (ctx) => {
   const { name, role, email, password, regNum, phone, college } =
     ctx.req.valid("json");
+
+  if (!process.env.JWT_SECRET) {
+    return ctx.text("Internal server error", 500);
+  }
 
   const existingUser = await prisma.auth.findUnique({
     where: {
@@ -89,10 +95,13 @@ authRouter.openapi(register, async (ctx) => {
     return auth;
   });
 
-  const token = jwt.sign(
-    { userId: auth.id, role: role },
-    process.env.JWT_SECRET as string,
-    { expiresIn: "2h" }
+  const token = await sign(
+    {
+      userId: auth.id,
+      role: role,
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 2,
+    },
+    process.env.JWT_SECRET
   );
 
   return ctx.json(
