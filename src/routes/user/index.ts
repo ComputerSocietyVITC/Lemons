@@ -10,14 +10,12 @@ const userRouter = new OpenAPIHono();
 
 userRouter.openapi(getUser, async (ctx) => {
   const user = getCurrentUser(ctx);
-  return new Response(JSON.stringify({ user }), { status: 200 });
+  return ctx.json(user, 200);
 });
 
 userRouter.openapi(getUserById, async (ctx) => {
   if (checkRole([Role.USER], ctx)) {
-    return new Response("Unauthorized", {
-      status: 403,
-    });
+    return ctx.text("Unauthorized", 403);
   }
 
   const id = ctx.req.param().id;
@@ -29,12 +27,10 @@ userRouter.openapi(getUserById, async (ctx) => {
   });
 
   if (!user) {
-    return new Response("User not found", {
-      status: 404,
-    });
+    return ctx.text("User not found", 404);
   }
 
-  return new Response(JSON.stringify({ user }), { status: 200 });
+  return ctx.json({ user }, 200);
 });
 
 export default userRouter;
