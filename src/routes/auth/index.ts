@@ -54,7 +54,8 @@ authRouter.openapi(login, async (ctx) => {
 });
 
 authRouter.openapi(register, async (ctx) => {
-  const { name, role, email, password } = ctx.req.valid("query");
+  const { name, role, email, password, regNum, phone, college } =
+    ctx.req.valid("query");
 
   const existingUser = await prisma.auth.findUnique({
     where: {
@@ -83,6 +84,9 @@ authRouter.openapi(register, async (ctx) => {
       data: {
         name,
         role,
+        regNum,
+        phone,
+        college,
         authId: auth.id,
       },
     });
@@ -90,8 +94,15 @@ authRouter.openapi(register, async (ctx) => {
     return auth;
   });
 
+  const token = jwt.sign(
+    { userId: auth.id, role: role },
+    process.env.JWT_SECRET as string,
+    { expiresIn: "2h" }
+  );
+
   return new Response(
     JSON.stringify({
+      token: token,
       userId: auth.id,
     }),
     {

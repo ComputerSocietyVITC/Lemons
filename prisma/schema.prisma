@@ -36,8 +36,8 @@ model User {
 
   isLeader Boolean @default(false)
 
-  team   Team   @relation(fields: [teamId], references: [id])
-  teamId String
+  team   Team?   @relation(fields: [teamId], references: [id])
+  teamId String?
 }
 
 model Team {
