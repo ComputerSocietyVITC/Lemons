@@ -21,16 +21,14 @@ authRouter.openapi(login, async (ctx) => {
   });
 
   if (!auth) {
-    return new Response("User not found", {
-      status: 404,
-    });
+    return ctx.text("User not found", 204);
   }
 
   const truePassword = await checkPassword(password, auth?.password);
 
   if (truePassword) {
     if (!process.env.JWT_SECRET) {
-      return new Response("Internal server error", { status: 500 });
+      return ctx.text("Internal server error", 500);
     }
 
     const token = jwt.sign(
@@ -39,17 +37,15 @@ authRouter.openapi(login, async (ctx) => {
       { expiresIn: "2h" }
     );
 
-    return new Response(
-      JSON.stringify({
+    return ctx.json(
+      {
         token: token,
         userId: auth.id,
-      }),
-      { status: 200 }
+      },
+      200
     );
   } else {
-    return new Response("Invalid password", {
-      status: 403,
-    });
+    return ctx.text("Invalid password", 403);
   }
 });
 
@@ -64,9 +60,7 @@ authRouter.openapi(register, async (ctx) => {
   });
 
   if (existingUser) {
-    return new Response("User already exists", {
-      status: 409,
-    });
+    return ctx.text("User already exists", 409);
   }
 
   const hashedPassword = await hashPassword(password);
@@ -101,14 +95,12 @@ authRouter.openapi(register, async (ctx) => {
     { expiresIn: "2h" }
   );
 
-  return new Response(
-    JSON.stringify({
+  return ctx.json(
+    {
       token: token,
       userId: auth.id,
-    }),
-    {
-      status: 201,
-    }
+    },
+    201
   );
 });
 
