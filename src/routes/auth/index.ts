@@ -59,13 +59,19 @@ authRouter.openapi(register, async (ctx) => {
     return ctx.text("Internal server error", 500);
   }
 
-  const existingUser = await prisma.auth.findUnique({
-    where: {
-      email,
-    },
-  });
+  const [existingAuth, existingUser] = await prisma.$transaction([
+    prisma.auth.findUnique({
+      where: { email },
+    }),
+    prisma.user.findFirst({
+      where: {
+        OR: [{ regNum }, { phone }],
+      },
+    }),
+  ]);
 
-  if (existingUser) {
+  console.log(existingAuth, existingUser);
+  if (existingAuth || existingUser) {
     return ctx.text("User already exists", 409);
   }
 
