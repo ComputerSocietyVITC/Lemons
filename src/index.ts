@@ -4,6 +4,7 @@ import { swaggerUI } from "@hono/swagger-ui";
 
 import authRouter from "./routes/auth/index.js";
 import userRouter from "./routes/user/index.js";
+import evaluationRouter from "./routes/evalutation/index.js";
 import { middleware } from "./lib/auth-provider.js";
 
 const app = new OpenAPIHono();
@@ -14,6 +15,7 @@ app.openAPIRegistry.registerComponent("securitySchemes", "Bearer", {
 });
 
 app.route("/auth", authRouter);
+app.route("/evaluation", evaluationRouter);
 
 app.get("/", (c) => {
   return c.text("Server is alive!");
@@ -25,6 +27,7 @@ app.doc("/openapi", {
     version: "0.0.1",
     title: "Backend for a hackathon management system",
   },
+  security: [{ Bearer: [] }],
 });
 
 app.get("/docs", swaggerUI({ url: "/openapi" }));

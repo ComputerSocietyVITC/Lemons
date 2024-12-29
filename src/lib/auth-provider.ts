@@ -16,7 +16,11 @@ export const middleware = async (ctx: Context, next: Next) => {
   authHeader = authHeader.split(" ")[1];
 
   try {
-    const decoded = await verify(authHeader, process.env.JWT_SECRET);
+    const decoded = (await verify(authHeader, process.env.JWT_SECRET)) as {
+      userId: string;
+      role: Role;
+      exp: number;
+    };
 
     ctx.set("user", decoded);
     await next();
