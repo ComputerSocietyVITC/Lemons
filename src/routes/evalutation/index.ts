@@ -35,12 +35,12 @@ evaluationRouter.openapi(createEvaluation, async (ctx) => {
     if (score < 0 || score > 10) {
       return ctx.text("Score must be between 0 and 10", 400);
     }
-    const evaluation = await prisma.evaluation.updateMany({
+    await prisma.evaluation.updateMany({
       where: { projectId },
       data: { score },
     });
 
-    return ctx.json(evaluation, 201);
+    return ctx.json("Record updated", 201);
   } catch (error) {
     console.error("Error occurred:", error);
 
