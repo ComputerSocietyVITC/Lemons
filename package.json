@@ -15,7 +15,6 @@
     "@hono/zod-openapi": "^0.18.3",
     "@prisma/client": "^6.1.0",
     "hono": "^4.6.14",
-    "jsonwebtoken": "^9.0.2",
     "minio": "^8.0.3"
   },
   "devDependencies": {

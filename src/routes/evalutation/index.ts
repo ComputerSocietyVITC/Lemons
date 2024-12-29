@@ -8,7 +8,7 @@ import {
 } from "./route.js";
 import { checkRole } from "../../lib/auth-provider.js";
 import { Role } from "@prisma/client";
-import { middleware } from "../../lib/auth-provider.js";
+
 const evaluationRouter = new OpenAPIHono();
 
 interface JWTPayload {
@@ -21,13 +21,12 @@ declare module "hono" {
     user: JWTPayload;
   }
 }
-evaluationRouter.use("*", middleware);
 
 // PUT /evaluations - Entering the scores for a project
 evaluationRouter.openapi(createEvaluation, async (ctx) => {
-  const { projectId, score } = ctx.req.valid("json");
   try {
     const allowedRoles: Role[] = ["SUPER_ADMIN", "EVALUATOR"];
+    const { projectId, score } = ctx.req.valid("json");
     if (!checkRole(allowedRoles, ctx)) {
       return ctx.text("You do not have permission to create evaluations", 403);
     }
@@ -55,45 +54,66 @@ evaluationRouter.openapi(createEvaluation, async (ctx) => {
 // GET /evaluations - Get all evaluations
 evaluationRouter.openapi(getEvaluation, async (ctx) => {
   try {
-    const allowedRoles: Role[] = ["SUPER_ADMIN", "EVALUATOR", "ADMIN", "USER"];
-
-    const user = ctx.get("user");
-
-    if (!user || !user.userId) {
-      console.log("Unauthorized - No user ID found", user);
-      return ctx.text("Unauthorized - No user ID found", 401);
-    }
-
-    const fetchedUser = await prisma.user.findUnique({
-      where: { authId: user.userId },
-      include: { team: { include: { project: true } } },
-    });
-
-    if (!fetchedUser) {
-      return ctx.text("Unauthorized - User not found", 401);
-    }
-
-    if (!allowedRoles.includes(fetchedUser.role)) {
+    const allowedRoles: Role[] = ["SUPER_ADMIN", "EVALUATOR"];
+    if (!checkRole(allowedRoles, ctx)) {
       return ctx.text("You do not have permission to view evaluations", 403);
+    } else {
+      const evaluations = await prisma.evaluation.findMany();
+      return ctx.json(evaluations, 200);
+    }
+  } catch (error) {
+    console.error("Error occurred:", error);
+    return ctx.text("An unexpected error occurred", 500);
+  }
+});
+
+// GET /evaluations/:id - Get a specific evaluation by projectId
+evaluationRouter.openapi(getEvaluationById, async (ctx) => {
+  const projectId = ctx.req.param("id");
+  try {
+    const user = ctx.get("user");
+    if (!user) {
+      return ctx.text("User not authenticated", 401);
     }
 
-    // Restrict evaluations for the USER role to only their project
-    let evaluations;
-    if (fetchedUser.role === "USER") {
-      if (!fetchedUser.team?.project) {
-        return ctx.text("No project associated with the user's team", 404);
+    if (user.role === "USER") {
+      const fetchedUser = await prisma.user.findUnique({
+        where: { id: user.userId },
+        include: {
+          team: {
+            include: {
+              project: true,
+            },
+          },
+        },
+      });
+
+      if (!fetchedUser?.team?.project) {
+        return ctx.text("No project associated with your team", 404);
+      }
+
+      // Check to see if the requested project matches the user's team's project
+      if (projectId !== fetchedUser.team.project.id) {
+        return ctx.text(
+          "You do not have permission to view evaluations for this project",
+          403
+        );
       }
 
       const evaluations = await prisma.evaluation.findMany({
-        where: { projectId: fetchedUser.team.project.id },
-        select: {
-          score: true,
+        where: { projectId },
+        include: {
+          project: true,
         },
       });
+
       return ctx.json(evaluations, 200);
-    } else {
-      evaluations = await prisma.evaluation.findMany();
     }
+    // This code block is for the evaluator and super admin roles
+    const evaluations = await prisma.evaluation.findMany({
+      where: { projectId },
+      include: { project: true },
+    });
 
     return ctx.json(evaluations, 200);
   } catch (error) {
@@ -101,35 +121,7 @@ evaluationRouter.openapi(getEvaluation, async (ctx) => {
     return ctx.text("An unexpected error occurred", 500);
   }
 });
-
-// GET /evaluations/:id - Get a specific evaluation by ID
-evaluationRouter.openapi(getEvaluationById, async (ctx) => {
-  const id = ctx.req.param("id");
-
-  try {
-    const allowedRoles: Role[] = ["SUPER_ADMIN", "EVALUATOR", "ADMIN"];
-    if (!checkRole(allowedRoles, ctx)) {
-      return ctx.text("You do not have permission to view evaluations", 403);
-    }
-
-    const evaluation = await prisma.evaluation.findUnique({
-      where: {
-        id,
-      },
-    });
-
-    if (!evaluation) {
-      return ctx.text("Evaluation not found", 404);
-    }
-
-    return ctx.json(evaluation, 200);
-  } catch (error) {
-    console.error("Error occurred:", error);
-    return ctx.text("An unexpected error occurred", 500);
-  }
-});
-
-// DELETE /evaluations/:id - Delete a specific evaluation by ID
+// DELETE /evaluations/:id - Delete a specific evaluation by projectId
 evaluationRouter.openapi(deleteEvaluation, async (ctx) => {
   const id = ctx.req.param("id");
 

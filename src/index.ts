@@ -15,7 +15,6 @@ app.openAPIRegistry.registerComponent("securitySchemes", "Bearer", {
 });
 
 app.route("/auth", authRouter);
-app.route("/evaluation", evaluationRouter);
 
 app.get("/", (c) => {
   return c.text("Server is alive!");
@@ -27,13 +26,13 @@ app.doc("/openapi", {
     version: "0.0.1",
     title: "Backend for a hackathon management system",
   },
-  security: [{ Bearer: [] }],
 });
 
 app.get("/docs", swaggerUI({ url: "/openapi" }));
 
 app.use(middleware);
 app.route("/user", userRouter);
+app.route("/evaluation", evaluationRouter);
 
 const port = 3000;
 console.log(`Server is running on http://localhost:${port}`);
