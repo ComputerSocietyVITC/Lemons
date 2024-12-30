@@ -8,19 +8,9 @@ import {
 } from "./route.js";
 import { checkRole } from "../../lib/auth-provider.js";
 import { Role } from "@prisma/client";
+import { getCurrentUser } from "../../lib/auth-provider.js";
 
 const evaluationRouter = new OpenAPIHono();
-
-interface JWTPayload {
-  userId: string;
-  role: Role;
-  exp: number;
-}
-declare module "hono" {
-  interface ContextVariableMap {
-    user: JWTPayload;
-  }
-}
 
 // PUT /evaluations - Entering the scores for a project
 evaluationRouter.openapi(createEvaluation, async (ctx) => {
@@ -71,7 +61,7 @@ evaluationRouter.openapi(getEvaluation, async (ctx) => {
 evaluationRouter.openapi(getEvaluationById, async (ctx) => {
   const projectId = ctx.req.param("id");
   try {
-    const user = ctx.get("user");
+    const user = getCurrentUser(ctx);
     if (!user) {
       return ctx.text("User not authenticated", 401);
     }
@@ -102,9 +92,6 @@ evaluationRouter.openapi(getEvaluationById, async (ctx) => {
 
       const evaluations = await prisma.evaluation.findMany({
         where: { projectId },
-        include: {
-          project: true,
-        },
       });
 
       return ctx.json(evaluations, 200);
@@ -112,7 +99,6 @@ evaluationRouter.openapi(getEvaluationById, async (ctx) => {
     // This code block is for the evaluator and super admin roles
     const evaluations = await prisma.evaluation.findMany({
       where: { projectId },
-      include: { project: true },
     });
 
     return ctx.json(evaluations, 200);
@@ -123,13 +109,12 @@ evaluationRouter.openapi(getEvaluationById, async (ctx) => {
 });
 // DELETE /evaluations/:id - Delete a specific evaluation by projectId
 evaluationRouter.openapi(deleteEvaluation, async (ctx) => {
-  const id = ctx.req.param("id");
-
   try {
     const allowedRoles: Role[] = ["SUPER_ADMIN", "EVALUATOR"];
     if (!checkRole(allowedRoles, ctx)) {
       return ctx.text("You do not have permission to delete evaluations", 403);
     }
+    const id = ctx.req.param("id");
 
     await prisma.evaluation.delete({
       where: {
