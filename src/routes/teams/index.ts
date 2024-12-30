@@ -45,7 +45,7 @@ teamRouter.openapi(getTeam, async (ctx) => {
     const teams = await prisma.team.findMany();
 
     if (!teams) {
-      return ctx.text("No team have registered", 404);
+      return ctx.text("No teams have registered", 404);
     }
 
     return ctx.json({ teams }, 200);
@@ -71,7 +71,7 @@ teamRouter.openapi(getTeamById, async (ctx) => {
       }
 
       if (teamId !== fetchedUser.team.id) {
-        return ctx.text("You do not have permission to view other team", 403);
+        return ctx.text("You do not have permission to view other teams", 403);
       }
 
       const team = await prisma.team.findUnique({

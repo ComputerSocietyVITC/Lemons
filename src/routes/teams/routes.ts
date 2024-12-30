@@ -6,7 +6,7 @@ export const getTeam = createRoute({
   path: "/",
   responses: {
     200: {
-      description: "All team retrieved successfully",
+      description: "All teams retrieved successfully",
       content: {
         "application/json": {
           schema: z.array(
@@ -21,7 +21,7 @@ export const getTeam = createRoute({
       description: "Unauthorized - User does not have permission",
     },
     404: {
-      description: "No team have registered",
+      description: "No teams have registered",
     },
     500: {
       description: "Server error",

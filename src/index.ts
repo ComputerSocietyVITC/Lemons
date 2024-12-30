@@ -4,7 +4,7 @@ import { swaggerUI } from "@hono/swagger-ui";
 
 import authRouter from "./routes/auth/index.js";
 import userRouter from "./routes/user/index.js";
-import teamRouter from "./routes/team/index.js";
+import teamRouter from "./routes/teams/index.js";
 import { middleware } from "./lib/auth-provider.js";
 
 const app = new OpenAPIHono();
@@ -32,7 +32,7 @@ app.get("/docs", swaggerUI({ url: "/openapi" }));
 
 app.use(middleware);
 app.route("/user", userRouter);
-app.route("/team", teamRouter);
+app.route("/teams", teamRouter);
 
 const port = 3000;
 console.log(`Server is running on http://localhost:${port}`);
