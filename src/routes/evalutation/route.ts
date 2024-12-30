@@ -58,7 +58,9 @@ export const getEvaluation = createRoute({
       description: "List of evaluations",
       content: {
         "application/json": {
-          schema: EvaluationSchema,
+          schema: EvaluationSchema.openapi({
+            description: "List of evaluations",
+          }),
         },
       },
     },
@@ -85,7 +87,9 @@ export const getEvaluationById = createRoute({
       description: "Evaluation retrieved successfully",
       content: {
         "application/json": {
-          schema: EvaluationSchema,
+          schema: EvaluationSchema.openapi({
+            description: "List of evaluations",
+          }),
         },
       },
     },
