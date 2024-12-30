@@ -90,7 +90,7 @@ export const createTeam = createRoute({
 
 export const deleteTeam = createRoute({
   method: "delete",
-  path: "/",
+  path: "/{id}",
   request: {
     params: z.object({
       name: z.string(),
