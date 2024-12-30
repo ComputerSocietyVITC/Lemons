@@ -14,8 +14,8 @@ export const createEvaluation = createRoute({
                 "UUID of the project for which the evaluation is created",
               example: "f47c9e99-10a9-4c12-8a8b-2f14ef9a9cba",
             }),
-            score: z.number().min(0).max(10).openapi({
-              description: "Score for the evaluation, between 0 and 10",
+            score: z.number().min(0).openapi({
+              description: "Score for the evaluation, must be greater than 0",
               example: 8,
             }),
           }),

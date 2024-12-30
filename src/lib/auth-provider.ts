@@ -24,7 +24,11 @@ export const middleware = async (ctx: Context, next: Next) => {
 
     ctx.set("user", decoded);
     await next();
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.name === "JwtTokenExpired") {
+      ctx.status(401);
+      return ctx.json({ message: "Unauthorized - Token expired" });
+    }
     ctx.status(401);
     return ctx.json({ message: "Unauthorized - Invalid token" });
   }
