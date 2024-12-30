@@ -15,14 +15,18 @@ const evaluationRouter = new OpenAPIHono();
 // PUT /evaluations - Entering the scores for a project
 evaluationRouter.openapi(createEvaluation, async (ctx) => {
   try {
+    const MAX_SCORE = 10;
     const allowedRoles: Role[] = ["SUPER_ADMIN", "EVALUATOR"];
     const { projectId, score } = ctx.req.valid("json");
     if (!checkRole(allowedRoles, ctx)) {
       return ctx.text("You do not have permission to create evaluations", 403);
     }
 
-    if (score < 0) {
-      return ctx.text("Score must be greater than 0", 400);
+    if (score < 0 || score > MAX_SCORE) {
+      return ctx.text(
+        "Score must be greater than 0 and less than ${MAX_SCORE}",
+        400
+      );
     }
     await prisma.evaluation.updateMany({
       where: { projectId },
@@ -72,7 +76,11 @@ evaluationRouter.openapi(getEvaluationById, async (ctx) => {
         include: {
           team: {
             include: {
-              project: true,
+              project: {
+                select: {
+                  id: true,
+                },
+              },
             },
           },
         },
