@@ -17,10 +17,11 @@ evaluationRouter.openapi(createEvaluation, async (ctx) => {
   try {
     const MAX_SCORE = 10;
     const allowedRoles: Role[] = ["SUPER_ADMIN", "EVALUATOR"];
-    const { projectId, score } = ctx.req.valid("json");
+
     if (!checkRole(allowedRoles, ctx)) {
       return ctx.text("You do not have permission to create evaluations", 403);
     }
+    const { projectId, score } = ctx.req.valid("json");
 
     if (score < 0 || score > MAX_SCORE) {
       return ctx.text(
@@ -28,12 +29,12 @@ evaluationRouter.openapi(createEvaluation, async (ctx) => {
         400
       );
     }
-    await prisma.evaluation.updateMany({
-      where: { projectId },
+    const evaluation = await prisma.evaluation.update({
+      where: { id: projectId },
       data: { score },
     });
 
-    return ctx.json("Record updated", 201);
+    return ctx.json({ message: "Record Updated", evaluation }, 201);
   } catch (error) {
     console.error("Error occurred:", error);
 
