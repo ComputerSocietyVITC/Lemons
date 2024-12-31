@@ -44,7 +44,7 @@ teamRouter.openapi(getTeam, async (ctx) => {
 
     const teams = await prisma.team.findMany();
 
-    if (!teams) {
+    if (teams.length === 0) {
       return ctx.text("No teams have registered", 404);
     }
 
@@ -59,6 +59,7 @@ teamRouter.openapi(getTeamById, async (ctx) => {
   try {
     const teamId = ctx.req.param("id");
     const user = getCurrentUser(ctx);
+    let team;
 
     if (user.role === "USER") {
       const fetchedUser = await prisma.user.findUnique({
@@ -74,19 +75,17 @@ teamRouter.openapi(getTeamById, async (ctx) => {
         return ctx.text("You do not have permission to view other teams", 403);
       }
 
-      const team = await prisma.team.findUnique({
+      team = await prisma.team.findUnique({
+        where: { id: teamId },
+      });
+    } else if (["SUPER_ADMIN", "ADMIN", "EVALUATOR"].includes(user.role)) {
+      team = await prisma.team.findUnique({
         where: { id: teamId },
       });
 
-      return ctx.json(team, 200);
-    }
-
-    const team = await prisma.team.findUnique({
-      where: { id: teamId },
-    });
-
-    if (!team) {
-      return ctx.text("Team not found", 404);
+      if (!team) {
+        return ctx.text("Team not found", 404);
+      }
     }
 
     return ctx.json({ team }, 200);
