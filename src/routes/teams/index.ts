@@ -36,7 +36,9 @@ teamRouter.openapi(createTeam, async (ctx) => {
 
 teamRouter.openapi(getTeam, async (ctx) => {
   try {
-    if (checkRole([Role.USER], ctx)) {
+    const allowedRoles: Role[] = ["SUPER_ADMIN", "ADMIN", "EVALUATOR"];
+
+    if (!checkRole(allowedRoles, ctx)) {
       return ctx.text("Unauthorized", 403);
     }
 
