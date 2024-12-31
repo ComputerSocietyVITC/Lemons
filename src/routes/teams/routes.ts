@@ -36,7 +36,9 @@ export const getTeamById = createRoute({
   path: "/{id}",
   request: {
     params: z.object({
-      id: z.string().uuid(),
+      id: z.string().uuid().openapi({
+        example: "123e4567-e89b-12d3-a456-426614174000",
+      }),
     }),
   },
   responses: {
@@ -70,8 +72,12 @@ export const createTeam = createRoute({
       content: {
         "application/json": {
           schema: z.object({
-            name: z.string(),
-            imageId: z.string().uuid(),
+            name: z.string().openapi({
+              example: "Best Team Evaaa",
+            }),
+            imageId: z.string().uuid().openapi({
+              example: "123e4567-e89b-12d3-a456-426614174000",
+            }),
           }),
         },
       },
@@ -102,7 +108,9 @@ export const deleteTeam = createRoute({
   path: "/{id}",
   request: {
     params: z.object({
-      name: z.string(),
+      name: z.string().openapi({
+        example: "Best Team Evaaa",
+      }),
     }),
   },
   responses: {
