@@ -9,11 +9,13 @@ export const getTeam = createRoute({
       description: "All teams retrieved successfully",
       content: {
         "application/json": {
-          schema: z.array(
-            z.object({
-              team: TeamSchema,
-            })
-          ),
+          schema: z.object({
+            data: z.array(
+              z.object({
+                team: TeamSchema,
+              })
+            ),
+          }),
         },
       },
     },
@@ -78,6 +80,13 @@ export const createTeam = createRoute({
   responses: {
     200: {
       description: "Team created successfully",
+      content: {
+        "application/json": {
+          schema: z.object({
+            team: TeamSchema,
+          }),
+        },
+      },
     },
     403: {
       description: "Unauthorized - User does not have permission",
