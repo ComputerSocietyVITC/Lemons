@@ -34,6 +34,10 @@ evaluationRouter.openapi(createEvaluation, async (ctx) => {
       data: { score },
     });
 
+    if (!evaluation) {
+      return ctx.text("Evaluation does not exist", 404);
+    }
+
     return ctx.json({ message: "Record Updated", evaluation }, 201);
   } catch (error) {
     console.error("Error occurred:", error);
