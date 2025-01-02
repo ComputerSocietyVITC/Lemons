@@ -61,13 +61,7 @@ export const getAllUsers = createRoute({
       description: "Retrieved all users",
       content: {
         "application/json": {
-          schema: z
-            .array(
-              z.object({
-                user: UserSchema,
-              })
-            )
-            .openapi("UsersResponse"),
+          schema: z.array(UserSchema).openapi("UsersResponse"),
         },
       },
     },
