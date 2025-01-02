@@ -52,3 +52,27 @@ export const getUserById = createRoute({
     },
   },
 });
+
+export const getAllUsers = createRoute({
+  method: "get",
+  path: "/all",
+  responses: {
+    200: {
+      description: "Retrieved all users",
+      content: {
+        "application/json": {
+          schema: z
+            .array(
+              z.object({
+                user: UserSchema,
+              })
+            )
+            .openapi("UsersResponse"),
+        },
+      },
+    },
+    403: {
+      description: "Forbidden",
+    },
+  },
+});
