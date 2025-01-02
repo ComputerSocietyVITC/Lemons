@@ -70,3 +70,27 @@ export const getAllUsers = createRoute({
     },
   },
 });
+
+export const deleteUserById = createRoute({
+  method: "delete",
+  path: "/{id}",
+  request: {
+    params: z.object({
+      id: z
+        .string()
+        .uuid()
+        .openapi({ example: "123e4567-e89b-12d3-a456-426614174000" }),
+    }),
+  },
+  responses: {
+    200: {
+      description: "Deleted user successfully",
+    },
+    403: {
+      description: "Forbidden",
+    },
+    404: {
+      description: "User not found",
+    },
+  },
+});
