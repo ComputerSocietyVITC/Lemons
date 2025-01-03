@@ -5,9 +5,12 @@ import { swaggerUI } from "@hono/swagger-ui";
 import authRouter from "./routes/auth/index.js";
 import userRouter from "./routes/user/index.js";
 import evaluationRouter from "./routes/evalutation/index.js";
-import { middleware } from "./lib/auth-provider.js";
+import { jwt } from "hono/jwt";
+import type { JwtVariables } from "hono/jwt";
 
-const app = new OpenAPIHono();
+type Variables = JwtVariables;
+
+const app = new OpenAPIHono<{ Variables: Variables }>();
 app.openAPIRegistry.registerComponent("securitySchemes", "Bearer", {
   type: "http",
   scheme: "bearer",
@@ -30,7 +33,17 @@ app.doc("/openapi", {
 
 app.get("/docs", swaggerUI({ url: "/openapi" }));
 
-app.use(middleware);
+const secret = process.env.JWT_SECRET;
+if (!secret) {
+  throw new Error("JWT Token not set");
+}
+app.use(
+  "*",
+  jwt({
+    secret: secret,
+  })
+);
+
 app.route("/user", userRouter);
 app.route("/evaluation", evaluationRouter);
 
