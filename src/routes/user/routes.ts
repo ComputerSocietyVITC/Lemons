@@ -4,6 +4,11 @@ import { UserSchema } from "../../schemas/user.js";
 export const getUser = createRoute({
   method: "get",
   path: "/",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   responses: {
     200: {
       description: "Retrieved user successfully",
@@ -26,6 +31,11 @@ export const getUser = createRoute({
 export const getUserById = createRoute({
   method: "get",
   path: "/{id}",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   request: {
     params: z.object({
       id: z
