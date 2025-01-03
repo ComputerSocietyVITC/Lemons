@@ -16,11 +16,19 @@ export const middleware = async (ctx: Context, next: Next) => {
   authHeader = authHeader.split(" ")[1];
 
   try {
-    const decoded = await verify(authHeader, process.env.JWT_SECRET);
+    const decoded = (await verify(authHeader, process.env.JWT_SECRET)) as {
+      userId: string;
+      role: Role;
+      exp: number;
+    };
 
     ctx.set("user", decoded);
     await next();
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.name === "JwtTokenExpired") {
+      ctx.status(401);
+      return ctx.json({ message: "Unauthorized - Token expired" });
+    }
     ctx.status(401);
     return ctx.json({ message: "Unauthorized - Invalid token" });
   }

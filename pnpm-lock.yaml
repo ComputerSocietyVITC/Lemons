@@ -50,9 +50,6 @@ importers:
       husky:
         specifier: ^9.1.7
         version: 9.1.7
-      "jsonwebtoken\eOA":
-        specifier: "link:@types/jsonwebtoken\eOA"
-        version: "link:@types/jsonwebtoken\eOA"
       lint-staged:
         specifier: ^15.2.11
         version: 15.2.11
