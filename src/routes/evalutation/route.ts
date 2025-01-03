@@ -4,6 +4,11 @@ import { EvaluationSchema } from "../../schemas/evaluation.js";
 export const createEvaluation = createRoute({
   method: "put",
   path: "/",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   request: {
     body: {
       content: {
@@ -54,6 +59,11 @@ export const createEvaluation = createRoute({
 export const getEvaluation = createRoute({
   method: "get",
   path: "/",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   responses: {
     200: {
       description: "List of evaluations",
@@ -76,6 +86,11 @@ export const getEvaluation = createRoute({
 export const getEvaluationById = createRoute({
   method: "get",
   path: "/{id}",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   request: {
     params: z.object({
       id: z.string().uuid().openapi({
@@ -108,6 +123,11 @@ export const getEvaluationById = createRoute({
 export const deleteEvaluation = createRoute({
   method: "delete",
   path: "/{id}",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   request: {
     params: z.object({
       id: z.string().uuid().openapi({
