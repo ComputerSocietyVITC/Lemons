@@ -56,6 +56,11 @@ export const getUserById = createRoute({
 export const getAllUsers = createRoute({
   method: "get",
   path: "/all",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   responses: {
     200: {
       description: "Retrieved all users",
@@ -74,6 +79,11 @@ export const getAllUsers = createRoute({
 export const deleteUserById = createRoute({
   method: "delete",
   path: "/{id}",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   request: {
     params: z.object({
       id: z
