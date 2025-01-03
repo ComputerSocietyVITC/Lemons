@@ -77,21 +77,6 @@ export const register = createRoute({
   responses: {
     201: {
       description: "User registered successfully",
-      content: {
-        "application/json": {
-          schema: z
-            .object({
-              token: z.string().openapi({
-                example:
-                  "eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTczNTE0MDk3NiwiaWF0IjoxNzM1MTQwOTc2fQ",
-              }),
-              userId: z
-                .string()
-                .openapi({ example: "c9d2841e-7696-4360-bce4-9f9f3e2469cd" }),
-            })
-            .openapi("TokenResponse"),
-        },
-      },
     },
     409: {
       description: "User already exists",
