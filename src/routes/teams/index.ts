@@ -13,11 +13,15 @@ teamRouter.openapi(createTeam, async (ctx) => {
     const user = await prisma.user.findUnique({
       where: { id: getCurrentUser(ctx).id },
     });
-    const allowedRoles: Role[] = ["SUPER_ADMIN", "ADMIN"];
+    const allowedRoles: Role[] = ["SUPER_ADMIN", "ADMIN", "USER"];
     const { name, imageId } = ctx.req.valid("json");
 
-    if (!checkRole(allowedRoles, ctx) && !user?.isLeader) {
+    if (!checkRole(allowedRoles, ctx)) {
       return ctx.text("Unauthorized", 403);
+    }
+
+    if (user?.role == "USER" && user?.teamId != null) {
+      return ctx.text("You are already part of a team", 403);
     }
 
     await prisma.team.create({
@@ -26,6 +30,15 @@ teamRouter.openapi(createTeam, async (ctx) => {
         imageId: imageId,
       },
     });
+
+    if (user?.role == "USER") {
+      await prisma.user.update({
+        where: { id: user?.id },
+        data: {
+          isLeader: true,
+        },
+      });
+    }
 
     return ctx.text("Team created successfully.", 200);
   } catch (error) {
