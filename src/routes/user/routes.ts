@@ -114,3 +114,59 @@ export const deleteUserById = createRoute({
     },
   },
 });
+
+export const updateUser = createRoute({
+  method: "post",
+  path: "/{id}",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
+  request: {
+    params: z.object({
+      id: z
+        .string()
+        .uuid()
+        .openapi({ example: "123e4567-e89b-12d3-a456-426614174000" }),
+    }),
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            name: z.string().optional().openapi({ example: "Example Name" }),
+            regNum: z.string().optional().openapi({ example: "23BRS1369" }),
+            phone: z.string().optional().openapi({ example: "1234567890" }),
+            college: z
+              .string()
+              .optional()
+              .openapi({ example: "Example College" }),
+            github: z
+              .string()
+              .optional()
+              .openapi({ example: "https://github.com/libkush" }),
+            imageId: z
+              .string()
+              .optional()
+              .openapi({ example: "123e4567-e89b-12d3-a456-426614174000" }),
+          }),
+        },
+      },
+    },
+  },
+
+  responses: {
+    201: {
+      description: "User updated successfully",
+    },
+    403: {
+      description: "Forbidden",
+    },
+    409: {
+      description: "One or more field(s) conflict(s) with other users.",
+    },
+    500: {
+      description: "JWT secret not set",
+    },
+  },
+});
