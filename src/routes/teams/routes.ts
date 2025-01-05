@@ -4,6 +4,11 @@ import { TeamSchema } from "../../schemas/team.js";
 export const getTeam = createRoute({
   method: "get",
   path: "/",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   responses: {
     200: {
       description: "All teams retrieved successfully",
@@ -34,6 +39,11 @@ export const getTeam = createRoute({
 export const getTeamById = createRoute({
   method: "get",
   path: "/{id}",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   request: {
     params: z.object({
       id: z.string().uuid().openapi({
@@ -67,6 +77,11 @@ export const getTeamById = createRoute({
 export const createTeam = createRoute({
   method: "post",
   path: "/",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   request: {
     body: {
       content: {
@@ -106,6 +121,11 @@ export const createTeam = createRoute({
 export const deleteTeam = createRoute({
   method: "delete",
   path: "/{id}",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
   request: {
     params: z.object({
       name: z.string().openapi({
