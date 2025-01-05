@@ -6,6 +6,7 @@ import {
   getAllUsers,
   getUser,
   getUserById,
+  promoteUser,
   updateUser,
 } from "./routes.js";
 import { Role, Prisma } from "@prisma/client";
@@ -107,4 +108,30 @@ userRouter.openapi(updateUser, async (ctx) => {
   return ctx.text("User updated successfully", 201);
 });
 
+userRouter.openapi(promoteUser, async (ctx) => {
+  const id = ctx.req.param().id;
+  if (!checkRole([Role.SUPER_ADMIN], ctx)) {
+    return ctx.text("Forbidden", 403);
+  }
+  const { role } = ctx.req.valid("json");
+
+  try {
+    await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        role,
+      },
+    });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === "P2025") {
+        return ctx.text("User not found", 404);
+      }
+    }
+    throw e;
+  }
+  return ctx.text("User role updated successfully", 201);
+});
 export default userRouter;

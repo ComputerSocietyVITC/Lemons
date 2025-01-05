@@ -1,5 +1,6 @@
 import { z, createRoute } from "@hono/zod-openapi";
 import { UserSchema } from "../../schemas/user.js";
+import { Role } from "@prisma/client";
 
 export const getUser = createRoute({
   method: "get",
@@ -105,6 +106,44 @@ export const deleteUserById = createRoute({
   responses: {
     200: {
       description: "Deleted user successfully",
+    },
+    403: {
+      description: "Forbidden",
+    },
+    404: {
+      description: "User not found",
+    },
+  },
+});
+
+export const promoteUser = createRoute({
+  method: "post",
+  path: "/promote/{id}",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
+  request: {
+    params: z.object({
+      id: z
+        .string()
+        .uuid()
+        .openapi({ example: "123e4567-e89b-12d3-a456-426614174000" }),
+    }),
+    body: {
+      content: {
+        "application/json": {
+          schema: z.object({
+            role: z.nativeEnum(Role).openapi({ example: "ADMIN" }),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: "User role updated successfully",
     },
     403: {
       description: "Forbidden",
