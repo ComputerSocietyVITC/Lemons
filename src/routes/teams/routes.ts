@@ -1,5 +1,5 @@
 import { z, createRoute } from "@hono/zod-openapi";
-import { TeamSchema } from "../../schemas/team";
+import { TeamSchema } from "../../schemas/team.js";
 
 export const getTeam = createRoute({
   method: "get",
