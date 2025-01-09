@@ -4,6 +4,7 @@ import { EvaluationSchema } from "../../schemas/evaluation.js";
 export const createEvaluation = createRoute({
   method: "put",
   path: "/",
+  tags: ["Evaluations"],
   security: [
     {
       Bearer: [],
@@ -13,18 +14,20 @@ export const createEvaluation = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: z.object({
-            projectId: z.string().uuid().openapi({
-              description:
-                "UUID of the project for which the evaluation is created",
-              example: "f47c9e99-10a9-4c12-8a8b-2f14ef9a9cba",
-            }),
-            score: z.number().openapi({
-              description:
-                "Score for the evaluation, must be greater than 0 and less than MAX_SCORE",
-              example: 8,
-            }),
-          }),
+          schema: z
+            .object({
+              projectId: z.string().uuid().openapi({
+                description:
+                  "UUID of the project for which the evaluation is created",
+                example: "f47c9e99-10a9-4c12-8a8b-2f14ef9a9cba",
+              }),
+              score: z.number().openapi({
+                description:
+                  "Score for the evaluation, must be greater than 0 and less than MAX_SCORE",
+                example: 8,
+              }),
+            })
+            .openapi("EvaluationResponse"),
         },
       },
     },
@@ -45,13 +48,13 @@ export const createEvaluation = createRoute({
       },
     },
     403: {
-      description: "Unauthorized - User does not have permission",
+      description: "Forbidden. User does not have sufficient permissions.",
     },
     404: {
-      description: "Project not found",
+      description: "Project not found.",
     },
     500: {
-      description: "Server error",
+      description: "Unexpected server error.",
     },
   },
 });
@@ -59,6 +62,7 @@ export const createEvaluation = createRoute({
 export const getEvaluation = createRoute({
   method: "get",
   path: "/",
+  tags: ["Evaluations"],
   security: [
     {
       Bearer: [],
@@ -76,16 +80,18 @@ export const getEvaluation = createRoute({
       },
     },
     403: {
-      description: "Unauthorized - User does not have permission",
+      description: "Forbidden. User does not have sufficient permissions.",
     },
     500: {
-      description: "Server error",
+      description: "Unexpected server error.",
     },
   },
 });
+
 export const getEvaluationById = createRoute({
   method: "get",
   path: "/{id}",
+  tags: ["Evaluations"],
   security: [
     {
       Bearer: [],
@@ -110,19 +116,21 @@ export const getEvaluationById = createRoute({
       },
     },
     403: {
-      description: "Unauthorized - User does not have permission",
+      description: "Forbidden. User does not have sufficient permissions.",
     },
     404: {
-      description: "Evaluation not found",
+      description: "Evaluation not found.",
     },
     500: {
-      description: "Server error",
+      description: "Unexpected server error.",
     },
   },
 });
+
 export const deleteEvaluation = createRoute({
   method: "delete",
   path: "/{id}",
+  tags: ["Evaluations"],
   security: [
     {
       Bearer: [],
@@ -147,13 +155,13 @@ export const deleteEvaluation = createRoute({
       },
     },
     403: {
-      description: "Unauthorized - User does not have permission",
+      description: "Forbidden. User does not have sufficient permissions.",
     },
     404: {
-      description: "Evaluation not found",
+      description: "Evaluation not found.",
     },
     500: {
-      description: "Server error",
+      description: "Unexpected server error.",
     },
   },
 });

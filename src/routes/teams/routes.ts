@@ -4,6 +4,7 @@ import { TeamSchema } from "../../schemas/team.js";
 export const getAllTeams = createRoute({
   method: "get",
   path: "/all",
+  tags: ["Teams"],
   security: [
     {
       Bearer: [],
@@ -30,6 +31,7 @@ export const getAllTeams = createRoute({
 export const joinTeam = createRoute({
   method: "post",
   path: "/{id}/join",
+  tags: ["Teams"],
   security: [
     {
       Bearer: [],
@@ -64,6 +66,7 @@ export const joinTeam = createRoute({
 export const leaveTeam = createRoute({
   method: "delete",
   path: "/leave",
+  tags: ["Teams"],
   security: [
     {
       Bearer: [],
@@ -88,6 +91,7 @@ export const leaveTeam = createRoute({
 export const removeUser = createRoute({
   method: "delete",
   path: "/{id}/remove",
+  tags: ["Teams"],
   security: [
     {
       Bearer: [],
@@ -122,6 +126,7 @@ export const removeUser = createRoute({
 export const getTeam = createRoute({
   method: "get",
   path: "/{id}",
+  tags: ["Teams"],
   security: [
     {
       Bearer: [],
@@ -139,7 +144,7 @@ export const getTeam = createRoute({
       description: "Successfully retrieved team.",
       content: {
         "application/json": {
-          schema: TeamSchema,
+          schema: TeamSchema.openapi("TeamResponse"),
         },
       },
     },
@@ -155,6 +160,7 @@ export const getTeam = createRoute({
 export const createTeam = createRoute({
   method: "put",
   path: "/",
+  tags: ["Teams"],
   security: [
     {
       Bearer: [],
@@ -200,6 +206,7 @@ export const createTeam = createRoute({
 export const deleteTeam = createRoute({
   method: "delete",
   path: "/{id}",
+  tags: ["Teams"],
   security: [
     {
       Bearer: [],
