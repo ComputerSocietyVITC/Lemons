@@ -112,6 +112,7 @@ teamRouter.openapi(joinTeam, async (ctx) => {
       where: { id: user.id },
       data: {
         teamId: id,
+        isLeader: false,
       },
     });
   } catch (e) {
