@@ -46,7 +46,7 @@ app.use(
 );
 
 app.route("/user", userRouter);
-app.route("/teams", teamRouter);
+app.route("/team", teamRouter);
 app.route("/evaluation", evaluationRouter);
 
 const port = 3000;
