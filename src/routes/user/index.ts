@@ -15,7 +15,15 @@ import { checkRole, getCurrentUser } from "../../lib/auth-provider.js";
 const userRouter = new OpenAPIHono();
 
 userRouter.openapi(getUser, async (ctx) => {
-  const user = getCurrentUser(ctx);
+  const userId = getCurrentUser(ctx).userId;
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+  if (!user) {
+    return ctx.text("User not found", 404);
+  }
   return ctx.json(user, 200);
 });
 
@@ -28,47 +36,39 @@ userRouter.openapi(getAllUsers, async (ctx) => {
       createdAt: "desc",
     },
   });
-  return ctx.json(users);
+  return ctx.json(users, 200);
 });
 
 userRouter.openapi(getUserById, async (ctx) => {
   if (checkRole([Role.USER], ctx)) {
-    return ctx.text("Unauthorized", 403);
+    return ctx.text("Forbidden", 403);
   }
-
   const id = ctx.req.param().id;
-
   const user = await prisma.user.findUnique({
     where: {
       id,
     },
   });
-
   if (!user) {
     return ctx.text("User not found", 404);
   }
-
-  return ctx.json({ user }, 200);
+  return ctx.json(user, 200);
 });
 
 userRouter.openapi(deleteUserById, async (ctx) => {
   if (!checkRole([Role.ADMIN, Role.SUPER_ADMIN], ctx)) {
     return ctx.text("Forbidden", 403);
   }
-
   const id = ctx.req.param().id;
-
   const user = await prisma.auth.delete({
     where: {
       id,
     },
   });
-
   if (!user) {
     return ctx.text("User not found", 404);
   }
-
-  return ctx.text(`User ${id} deleted successfully`, 200);
+  return ctx.text(`User deleted successfully`, 201);
 });
 
 userRouter.openapi(updateUser, async (ctx) => {
@@ -79,7 +79,6 @@ userRouter.openapi(updateUser, async (ctx) => {
   }
   const { name, regNum, phone, college, github, imageId } =
     ctx.req.valid("json");
-
   try {
     await prisma.user.update({
       where: {
@@ -114,7 +113,6 @@ userRouter.openapi(promoteUser, async (ctx) => {
     return ctx.text("Forbidden", 403);
   }
   const { role } = ctx.req.valid("json");
-
   try {
     await prisma.user.update({
       where: {

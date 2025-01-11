@@ -4,6 +4,7 @@ import { Role } from "@prisma/client";
 export const login = createRoute({
   method: "post",
   path: "/login",
+  tags: ["Auth"],
   request: {
     body: {
       content: {
@@ -34,7 +35,7 @@ export const login = createRoute({
                 .string()
                 .openapi({ example: "c9d2841e-7696-4360-bce4-9f9f3e2469cd" }),
             })
-            .openapi("TokenResponse"),
+            .openapi("LoginResponse"),
         },
       },
     },
@@ -53,6 +54,7 @@ export const login = createRoute({
 export const register = createRoute({
   method: "post",
   path: "/register",
+  tags: ["Auth"],
   request: {
     body: {
       content: {
@@ -73,7 +75,6 @@ export const register = createRoute({
       },
     },
   },
-
   responses: {
     201: {
       description: "User registered successfully",

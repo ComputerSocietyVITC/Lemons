@@ -5,6 +5,7 @@ import { Role } from "@prisma/client";
 export const getUser = createRoute({
   method: "get",
   path: "/",
+  tags: ["Users"],
   security: [
     {
       Bearer: [],
@@ -12,19 +13,15 @@ export const getUser = createRoute({
   ],
   responses: {
     200: {
-      description: "Retrieved user successfully",
+      description: "Retrieved user successfully.",
       content: {
         "application/json": {
-          schema: z
-            .object({
-              user: UserSchema,
-            })
-            .openapi("UserResponse"),
+          schema: UserSchema.openapi("UserResponse"),
         },
       },
     },
     404: {
-      description: "User not found",
+      description: "User not found.",
     },
   },
 });
@@ -32,6 +29,7 @@ export const getUser = createRoute({
 export const getUserById = createRoute({
   method: "get",
   path: "/{id}",
+  tags: ["Users"],
   security: [
     {
       Bearer: [],
@@ -47,19 +45,18 @@ export const getUserById = createRoute({
   },
   responses: {
     200: {
-      description: "Retrieved user successfully",
+      description: "Retrieved user successfully.",
       content: {
         "application/json": {
-          schema: z
-            .object({
-              user: UserSchema,
-            })
-            .openapi("UserResponse"),
+          schema: UserSchema,
         },
       },
     },
+    403: {
+      description: "Forbidden. User does not have sufficient permissions.",
+    },
     404: {
-      description: "User not found",
+      description: "User not found.",
     },
   },
 });
@@ -67,6 +64,7 @@ export const getUserById = createRoute({
 export const getAllUsers = createRoute({
   method: "get",
   path: "/all",
+  tags: ["Users"],
   security: [
     {
       Bearer: [],
@@ -74,15 +72,15 @@ export const getAllUsers = createRoute({
   ],
   responses: {
     200: {
-      description: "Retrieved all users",
+      description: "Retrieved all users.",
       content: {
         "application/json": {
-          schema: z.array(UserSchema).openapi("UsersResponse"),
+          schema: z.array(UserSchema),
         },
       },
     },
     403: {
-      description: "Forbidden",
+      description: "Forbidden. User does not have sufficient permissions.",
     },
   },
 });
@@ -90,6 +88,7 @@ export const getAllUsers = createRoute({
 export const deleteUserById = createRoute({
   method: "delete",
   path: "/{id}",
+  tags: ["Users"],
   security: [
     {
       Bearer: [],
@@ -104,14 +103,14 @@ export const deleteUserById = createRoute({
     }),
   },
   responses: {
-    200: {
-      description: "Deleted user successfully",
+    201: {
+      description: "Deleted user successfully.",
     },
     403: {
-      description: "Forbidden",
+      description: "Forbidden. User does not have sufficient permissions.",
     },
     404: {
-      description: "User not found",
+      description: "User not found.",
     },
   },
 });
@@ -119,6 +118,7 @@ export const deleteUserById = createRoute({
 export const promoteUser = createRoute({
   method: "post",
   path: "/promote/{id}",
+  tags: ["Users"],
   security: [
     {
       Bearer: [],
@@ -142,14 +142,14 @@ export const promoteUser = createRoute({
     },
   },
   responses: {
-    200: {
-      description: "User role updated successfully",
+    201: {
+      description: "User role updated successfully.",
     },
     403: {
-      description: "Forbidden",
+      description: "Forbidden. User does not have sufficient permissions.",
     },
     404: {
-      description: "User not found",
+      description: "User not found.",
     },
   },
 });
@@ -157,6 +157,7 @@ export const promoteUser = createRoute({
 export const updateUser = createRoute({
   method: "post",
   path: "/{id}",
+  tags: ["Users"],
   security: [
     {
       Bearer: [],
@@ -193,19 +194,18 @@ export const updateUser = createRoute({
       },
     },
   },
-
   responses: {
     201: {
-      description: "User updated successfully",
+      description: "User updated successfully.",
     },
     403: {
-      description: "Forbidden",
+      description: "Forbidden. User does not have sufficient permissions.",
     },
     409: {
       description: "One or more field(s) conflict(s) with other users.",
     },
     500: {
-      description: "JWT secret not set",
+      description: "JWT secret not set.",
     },
   },
 });
