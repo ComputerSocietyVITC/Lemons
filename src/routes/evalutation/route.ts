@@ -2,7 +2,7 @@ import { z, createRoute } from "@hono/zod-openapi";
 import { EvaluationSchema } from "../../schemas/evaluation.js";
 
 export const createEvaluation = createRoute({
-  method: "put",
+  method: "post",
   path: "/",
   tags: ["Evaluations"],
   security: [

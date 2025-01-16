@@ -74,7 +74,7 @@ model Evaluation {
   updatedAt DateTime @updatedAt
 
   project   Project @relation(fields: [projectId], references: [id])
-  projectId String
+  projectId String @unique
 
   score Int @default(0)
 }

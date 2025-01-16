@@ -12,40 +12,46 @@ import { getCurrentUser } from "../../lib/auth-provider.js";
 
 const evaluationRouter = new OpenAPIHono();
 
-// PUT /evaluations - Entering the scores for a project
+// POST /evaluations - For creating a new evaluation
 evaluationRouter.openapi(createEvaluation, async (ctx) => {
   try {
     const MAX_SCORE = 10;
     const allowedRoles: Role[] = ["SUPER_ADMIN", "EVALUATOR"];
 
     if (!checkRole(allowedRoles, ctx)) {
-      return ctx.text("You do not have permission to create evaluations", 403);
+      return ctx.text("You do not have permission to manage evaluations", 403);
     }
+
     const { projectId, score } = ctx.req.valid("json");
 
     if (score < 0 || score > MAX_SCORE) {
       return ctx.text(
-        "Score must be greater than 0 and less than ${MAX_SCORE}",
+        `Score must be greater than 0 and less than ${MAX_SCORE}`,
         400
       );
     }
-    const evaluation = await prisma.evaluation.update({
-      where: { id: projectId },
-      data: { score },
+
+    const evaluation = await prisma.evaluation.findFirst({
+      where: { projectId },
     });
 
-    if (!evaluation) {
-      return ctx.text("Evaluation does not exist", 404);
+    if (evaluation) {
+      const updatedEvaluation = await prisma.evaluation.update({
+        where: { projectId },
+        data: { score },
+      });
+      return ctx.json(updatedEvaluation, 200);
     }
 
-    return ctx.json({ message: "Record Updated", evaluation }, 201);
+    const newEvaluation = await prisma.evaluation.create({
+      data: {
+        projectId,
+        score,
+      },
+    });
+    return ctx.json(newEvaluation, 201);
   } catch (error) {
-    console.error("Error occurred:", error);
-
-    //Foreign key constraint error
-    if ((error as { code?: string }).code === "P2003") {
-      return ctx.text("Invalid project ID - Project does not exist", 400);
-    }
+    console.error("Error managing evaluation:", error);
     return ctx.text("An unexpected error occurred", 500);
   }
 });
@@ -124,10 +130,10 @@ evaluationRouter.openapi(deleteEvaluation, async (ctx) => {
     if (!checkRole(allowedRoles, ctx)) {
       return ctx.text("You do not have permission to delete evaluations", 403);
     }
-    const id = ctx.req.param("id");
+    const projectId = ctx.req.param("id");
 
     const evaluation = await prisma.evaluation.findUnique({
-      where: { id },
+      where: { projectId },
     });
 
     if (!evaluation) {
@@ -136,7 +142,7 @@ evaluationRouter.openapi(deleteEvaluation, async (ctx) => {
 
     await prisma.evaluation.delete({
       where: {
-        id,
+        projectId,
       },
     });
 
