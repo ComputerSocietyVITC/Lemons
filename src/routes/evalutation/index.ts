@@ -31,25 +31,15 @@ evaluationRouter.openapi(createEvaluation, async (ctx) => {
       );
     }
 
-    const evaluation = await prisma.evaluation.findFirst({
+    const evaluation = await prisma.evaluation.upsert({
       where: { projectId },
-    });
-
-    if (evaluation) {
-      const updatedEvaluation = await prisma.evaluation.update({
-        where: { projectId },
-        data: { score },
-      });
-      return ctx.json(updatedEvaluation, 200);
-    }
-
-    const newEvaluation = await prisma.evaluation.create({
-      data: {
+      update: { score },
+      create: {
         projectId,
         score,
       },
     });
-    return ctx.json(newEvaluation, 201);
+    return ctx.json(evaluation, 201);
   } catch (error) {
     console.error("Error managing evaluation:", error);
     return ctx.text("An unexpected error occurred", 500);
