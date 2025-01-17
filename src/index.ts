@@ -5,6 +5,7 @@ import { swaggerUI } from "@hono/swagger-ui";
 import authRouter from "./routes/auth/index.js";
 import userRouter from "./routes/user/index.js";
 import teamRouter from "./routes/teams/index.js";
+import projectRouter from "./routes/project/index.js";
 import evaluationRouter from "./routes/evalutation/index.js";
 import { jwt } from "hono/jwt";
 import type { JwtVariables } from "hono/jwt";
@@ -48,6 +49,7 @@ app.use(
 app.route("/user", userRouter);
 app.route("/team", teamRouter);
 app.route("/evaluation", evaluationRouter);
+app.route('/project', projectRouter)
 
 const port = 3000;
 console.log(`Server is running on http://localhost:${port}`);
