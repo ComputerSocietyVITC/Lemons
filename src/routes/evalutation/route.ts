@@ -47,6 +47,9 @@ export const createEvaluation = createRoute({
         },
       },
     },
+    401: {
+      description: "Unauthorized. User is not logged in.",
+    },
     403: {
       description: "Forbidden. User does not have sufficient permissions.",
     },
