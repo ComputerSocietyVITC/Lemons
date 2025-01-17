@@ -41,6 +41,9 @@ evaluationRouter.openapi(createEvaluation, async (ctx) => {
     });
     return ctx.json(evaluation, 201);
   } catch (error) {
+    if ((error as { code?: string }).code === "P2003") {
+      return ctx.text("Invalid project ID - Project does not exist", 400);
+    }
     console.error("Error managing evaluation:", error);
     return ctx.text("An unexpected error occurred", 500);
   }
