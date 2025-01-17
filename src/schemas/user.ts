@@ -1,5 +1,6 @@
 import { z } from "@hono/zod-openapi";
 import { Role } from "@prisma/client";
+import { EvaluationSchema } from "./evaluation";
 
 export const UserSchema = z.object({
   id: z
@@ -31,4 +32,5 @@ export const UserSchema = z.object({
     .uuid()
     .optional()
     .openapi({ example: "123e4567-e89b-12d3-a456-426614174000" }),
+  evaluations: EvaluationSchema.optional(),
 });
