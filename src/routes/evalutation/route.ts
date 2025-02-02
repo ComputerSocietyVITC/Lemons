@@ -2,7 +2,7 @@ import { z, createRoute } from "@hono/zod-openapi";
 import { EvaluationSchema } from "../../schemas/evaluation.js";
 
 export const createEvaluation = createRoute({
-  method: "put",
+  method: "post",
   path: "/",
   tags: ["Evaluations"],
   security: [
@@ -46,6 +46,9 @@ export const createEvaluation = createRoute({
           }),
         },
       },
+    },
+    401: {
+      description: "Unauthorized. User is not logged in.",
     },
     403: {
       description: "Forbidden. User does not have sufficient permissions.",
