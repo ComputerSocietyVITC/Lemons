@@ -8,6 +8,7 @@ import {
   getUserById,
   promoteUser,
   updateUser,
+  verifyToken,
 } from "./routes.js";
 import { Role, Prisma } from "@prisma/client";
 import { checkRole, getCurrentUser } from "../../lib/auth-provider.js";
@@ -25,6 +26,14 @@ userRouter.openapi(getUser, async (ctx) => {
     return ctx.text("User not found", 404);
   }
   return ctx.json(user, 200);
+});
+
+userRouter.openapi(verifyToken, async (ctx) => {
+  const _userId = getCurrentUser(ctx).userId;
+  if (!_userId) {
+    return ctx.text("Unverified token", 401);
+  }
+  return ctx.text("Token verified", 200);
 });
 
 userRouter.openapi(getAllUsers, async (ctx) => {
