@@ -26,6 +26,25 @@ export const getUser = createRoute({
   },
 });
 
+export const verifyToken = createRoute({
+  method: "get",
+  path: "/verify",
+  tags: ["Users"],
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
+  responses: {
+    200: {
+      description: "Token verified.",
+    },
+    401: {
+      description: "Token absent or unverified (possibly expired).",
+    },
+  },
+});
+
 export const getUserById = createRoute({
   method: "get",
   path: "/{id}",
