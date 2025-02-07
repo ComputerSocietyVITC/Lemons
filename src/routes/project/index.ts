@@ -1,24 +1,33 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import prisma from "../../lib/prisma-client.js";
-import{
-createProject,
-getAllProjects,
-getProject,
-updateProject,
-deleteProject,
-
-} from "./routes.js"
+import {
+  createProject,
+  getAllProjects,
+  getProject,
+  updateProject,
+  deleteProject,
+} from "./routes.js";
 import { checkRole, getCurrentUser } from "../../lib/auth-provider.js";
-import { Prisma } from "@prisma/client";
-import teamRouter from "../teams/index.js";
+import { Role, Prisma } from "@prisma/client";
 
 const projectRouter = new OpenAPIHono();
 
 projectRouter.openapi(createProject, async (ctx) => {
-  const { name, description, imageId, teamId } = ctx.req.valid("json");
+  const { name, description, teamId } = ctx.req.valid("json");
 
-  if (!checkRole(["SUPER_ADMIN", "ADMIN"], ctx)) {
+  if (!checkRole([Role.SUPER_ADMIN, Role.ADMIN, Role.USER], ctx)) {
     return ctx.text("Forbidden", 403);
+  }
+
+  const user = getCurrentUser(ctx);
+  if (checkRole([Role.USER], ctx)) {
+    const fetchedUser = await prisma.user.findUnique({
+      where: { id: user.userId },
+      include: { team: true },
+    });
+    if (teamId !== fetchedUser?.team?.id || !fetchedUser?.isLeader) {
+      return ctx.text("Forbidden", 403);
+    }
   }
 
   try {
@@ -26,13 +35,15 @@ projectRouter.openapi(createProject, async (ctx) => {
       data: {
         name,
         description,
-        imageId,
         teamId,
       },
     });
     return ctx.json(project, 201);
   } catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+    if (
+      e instanceof Prisma.PrismaClientKnownRequestError &&
+      e.code === "P2002"
+    ) {
       return ctx.text("Project with this name or imageId already exists", 409);
     }
     throw e;
@@ -40,7 +51,7 @@ projectRouter.openapi(createProject, async (ctx) => {
 });
 
 projectRouter.openapi(getAllProjects, async (ctx) => {
-  if (!checkRole(["SUPER_ADMIN", "ADMIN", "EVALUATOR"], ctx)) {
+  if (!checkRole([Role.SUPER_ADMIN, Role.ADMIN, Role.EVALUATOR], ctx)) {
     return ctx.text("Forbidden", 403);
   }
 
@@ -59,16 +70,23 @@ projectRouter.openapi(getAllProjects, async (ctx) => {
 projectRouter.openapi(getProject, async (ctx) => {
   const projectId = ctx.req.param("id");
 
-  if (!checkRole(["SUPER_ADMIN", "ADMIN", "USER"], ctx)) {
-    return ctx.text("Forbidden", 403);
-  }
-
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     include: {
       team: true,
     },
   });
+
+  const user = getCurrentUser(ctx);
+  if (checkRole([Role.USER], ctx)) {
+    const fetchedUser = await prisma.user.findUnique({
+      where: { id: user.userId },
+      include: { team: true },
+    });
+    if (project?.teamId !== fetchedUser?.team?.id) {
+      return ctx.text("Forbidden", 403);
+    }
+  }
 
   if (!project) {
     return ctx.text("Project not found", 404);
@@ -79,10 +97,27 @@ projectRouter.openapi(getProject, async (ctx) => {
 
 projectRouter.openapi(updateProject, async (ctx) => {
   const projectId = ctx.req.param("id");
-  const { name, description, imageId } = ctx.req.valid("json");
+  const { name, description, repoUrl, demoUrl, reportUrl, imageId } =
+    ctx.req.valid("json");
 
-  if (!checkRole(["SUPER_ADMIN", "ADMIN"], ctx)) {
+  if (!checkRole([Role.SUPER_ADMIN, Role.ADMIN, Role.USER], ctx)) {
     return ctx.text("Forbidden", 403);
+  }
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: {
+      team: true,
+    },
+  });
+  const user = getCurrentUser(ctx);
+  if (checkRole([Role.USER], ctx)) {
+    const fetchedUser = await prisma.user.findUnique({
+      where: { id: user.userId },
+      include: { team: true },
+    });
+    if (project?.teamId !== fetchedUser?.team?.id) {
+      return ctx.text("Forbidden", 403);
+    }
   }
 
   try {
@@ -91,12 +126,18 @@ projectRouter.openapi(updateProject, async (ctx) => {
       data: {
         name,
         description,
+        repoUrl,
+        demoUrl,
+        reportUrl,
         imageId,
       },
     });
     return ctx.json(updatedProject, 200);
   } catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2025") {
+    if (
+      e instanceof Prisma.PrismaClientKnownRequestError &&
+      e.code === "P2025"
+    ) {
       return ctx.text("Project not found", 404);
     }
     throw e;
@@ -106,7 +147,7 @@ projectRouter.openapi(updateProject, async (ctx) => {
 projectRouter.openapi(deleteProject, async (ctx) => {
   const projectId = ctx.req.param("id");
 
-  if (!checkRole(["SUPER_ADMIN", "ADMIN"], ctx)) {
+  if (!checkRole([Role.SUPER_ADMIN, Role.ADMIN], ctx)) {
     return ctx.text("Forbidden", 403);
   }
 
@@ -116,7 +157,10 @@ projectRouter.openapi(deleteProject, async (ctx) => {
     });
     return ctx.text("Project deleted successfully", 200);
   } catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2025") {
+    if (
+      e instanceof Prisma.PrismaClientKnownRequestError &&
+      e.code === "P2025"
+    ) {
       return ctx.text("Project not found", 404);
     }
     throw e;
@@ -124,6 +168,3 @@ projectRouter.openapi(deleteProject, async (ctx) => {
 });
 
 export default projectRouter;
-
-
-  

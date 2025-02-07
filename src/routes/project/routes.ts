@@ -85,10 +85,7 @@ export const createProject = createRoute({
             description: z.string().openapi({
               example: "This is the first project.",
             }),
-            imageId: z.string().uuid().openapi({
-              example: "123e4567-e89b-12d3-a456-426614174000",
-            }),
-            teamId: z.string().uuid().openapi({
+            teamId: z.string().openapi({
               example: "123e4567-e89b-12d3-a456-426614174000",
             }),
           }),
@@ -109,7 +106,7 @@ export const createProject = createRoute({
       description: "Forbidden. User does not have sufficient permissions.",
     },
     409: {
-      description: "Conflict. Team already has an assigned project.",
+      description: "Conflict. Team has already created a project.",
     },
     500: {
       description: "Unexpected server error.",
@@ -118,7 +115,7 @@ export const createProject = createRoute({
 });
 
 export const updateProject = createRoute({
-  method: "put",
+  method: "post",
   path: "/{id}",
   tags: ["Projects"],
   security: [
@@ -136,13 +133,22 @@ export const updateProject = createRoute({
       content: {
         "application/json": {
           schema: z.object({
-            name: z.string().openapi({
+            name: z.string().optional().openapi({
               example: "Updated Project Name",
             }),
-            description: z.string().openapi({
+            description: z.string().optional().openapi({
               example: "Updated description for the project.",
             }),
-            imageId: z.string().uuid().openapi({
+            repoUrl: z.string().optional().openapi({
+              example: "https://github.com/ComputerSocietyVITC/Lemons",
+            }),
+            demoUrl: z.string().optional().openapi({
+              example: "https://www.adityajyoti.com/",
+            }),
+            reportUrl: z.string().optional().openapi({
+              example: "https://www.seas.upenn.edu/~zives/03f/cis550/codd.pdf",
+            }),
+            imageId: z.string().uuid().optional().openapi({
               example: "123e4567-e89b-12d3-a456-426614174000",
             }),
           }),
