@@ -61,6 +61,9 @@ model Project {
 
   name        String  @unique
   description String
+  repoUrl     String? @unique
+  demoUrl     String? @unique
+  reportUrl   String? @unique
   imageId     String? @unique
 
   team   Team   @relation(fields: [teamId], references: [id])
