@@ -5,6 +5,8 @@ export const getAllTeams = createRoute({
   method: "get",
   path: "/all",
   tags: ["Teams"],
+  description:
+    "Fetches the list of all teams from the database. Can be accessed by ADMIN, SUPER_ADMIN and EVALUATOR.",
   security: [
     {
       Bearer: [],
@@ -32,6 +34,8 @@ export const joinTeam = createRoute({
   method: "post",
   path: "/{id}/join",
   tags: ["Teams"],
+  description:
+    "Authenticated will join team with specified ID, can be accessed only by USER",
   security: [
     {
       Bearer: [],
@@ -67,6 +71,8 @@ export const leaveTeam = createRoute({
   method: "delete",
   path: "/leave",
   tags: ["Teams"],
+  description:
+    "User will leave whatever team they are a part of. Can be accessed only by USER.",
   security: [
     {
       Bearer: [],
@@ -92,6 +98,8 @@ export const removeUser = createRoute({
   method: "delete",
   path: "/{id}/remove",
   tags: ["Teams"],
+  description:
+    "Removes a user with specified id from whatever team he is a part of. Can be accessed by ADMIN, SUPER_ADMIN and USER who is the leader of the specified user's team.",
   security: [
     {
       Bearer: [],
@@ -127,6 +135,8 @@ export const getTeam = createRoute({
   method: "get",
   path: "/{id}",
   tags: ["Teams"],
+  description:
+    "Gets the team with specified ID. Can be accessed by ADMIN, SUPER_ADMIN, EVALUATOR and USER who is a part of the same team.",
   security: [
     {
       Bearer: [],
@@ -161,6 +171,8 @@ export const createTeam = createRoute({
   method: "put",
   path: "/",
   tags: ["Teams"],
+  description:
+    "Creates a new team. Can be accessed only by ADMIN, SUPER_ADMIN and USER who isn't a part of any team.",
   security: [
     {
       Bearer: [],
@@ -207,6 +219,8 @@ export const deleteTeam = createRoute({
   method: "delete",
   path: "/{id}",
   tags: ["Teams"],
+  description:
+    "Deletes team with specified ID from the database. Can be accessed by ADMIN and SUPER_ADMIN only.",
   security: [
     {
       Bearer: [],
