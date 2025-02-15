@@ -5,6 +5,8 @@ export const getProjectsShowcase = createRoute({
   method: "get",
   path: "/projects",
   tags: ["Showcase"],
+  description:
+    "Fetches a list of all the projects. Can be accessed by unauthenticated users.",
   responses: {
     200: {
       description: "Successfully retrieved all projects.",
