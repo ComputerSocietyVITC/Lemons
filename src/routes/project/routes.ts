@@ -5,6 +5,8 @@ export const getAllProjects = createRoute({
   method: "get",
   path: "/all",
   tags: ["Projects"],
+  description:
+    "Fetches a list of all the projects from the database. Can be accessed by ADMIN, SUPER_ADMIN and EVALUATOR.",
   security: [
     {
       Bearer: [],
@@ -32,6 +34,8 @@ export const getProject = createRoute({
   method: "get",
   path: "/{id}",
   tags: ["Projects"],
+  description:
+    "Fetches project with specified ID from the database. Can be accessed by ADMIN, SUPER_ADMIN, EVALUATOR and USER whose team owns the project.",
   security: [
     {
       Bearer: [],
@@ -69,6 +73,8 @@ export const createProject = createRoute({
   method: "post",
   path: "/",
   tags: ["Projects"],
+  description:
+    "Creates a new project. Can be accessed by ADMIN, SUPER_ADMIN and USER who is the leader of the specified team.",
   security: [
     {
       Bearer: [],
@@ -118,6 +124,8 @@ export const updateProject = createRoute({
   method: "post",
   path: "/{id}",
   tags: ["Projects"],
+  description:
+    "Updates project with specified ID. Can be accessed by ADMIN, SUPER_ADMIN and USER who belongs to the projects' team.",
   security: [
     {
       Bearer: [],
@@ -181,6 +189,8 @@ export const deleteProject = createRoute({
   method: "delete",
   path: "/{id}",
   tags: ["Projects"],
+  description:
+    "Deletes the project with specified ID. Can be accessed by ADMIN and SUPER_ADMIN only.",
   security: [
     {
       Bearer: [],

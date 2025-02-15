@@ -5,6 +5,8 @@ export const createEvaluation = createRoute({
   method: "post",
   path: "/",
   tags: ["Evaluations"],
+  description:
+    "Fetches an evaluation from the database. Can be accessed by SUPER_ADMIN and EVALUATOR.",
   security: [
     {
       Bearer: [],
@@ -66,6 +68,8 @@ export const getEvaluation = createRoute({
   method: "get",
   path: "/",
   tags: ["Evaluations"],
+  description:
+    "Fetches all evaluations from the database. Can be accessed by ADMIN, SUPER_ADMIN and EVALUATOR.",
   security: [
     {
       Bearer: [],
@@ -95,6 +99,8 @@ export const getEvaluationById = createRoute({
   method: "get",
   path: "/{id}",
   tags: ["Evaluations"],
+  description:
+    "Fetches evaluation with specified ID. Can be accessed by ADMIN, SUPER_ADMIN and EVALUATOR.",
   security: [
     {
       Bearer: [],
@@ -134,6 +140,8 @@ export const deleteEvaluation = createRoute({
   method: "delete",
   path: "/{id}",
   tags: ["Evaluations"],
+  description:
+    "Deletes evaluation of specified ID from the database. Can be accessed by ADMIN, SUPER_ADMIN and EVALUATOR.",
   security: [
     {
       Bearer: [],
