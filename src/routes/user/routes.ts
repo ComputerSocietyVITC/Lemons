@@ -6,6 +6,8 @@ export const getUser = createRoute({
   method: "get",
   path: "/",
   tags: ["Users"],
+  description:
+    "Will fetch the currently authenticated user from database. Can be USER, EVALUATOR, ADMIN or SUPER_ADMIN.",
   security: [
     {
       Bearer: [],
@@ -30,6 +32,8 @@ export const verifyToken = createRoute({
   method: "get",
   path: "/verify",
   tags: ["Users"],
+  description:
+    "Will check the validity of JWT token of currently authenticated user. Can be USER, EVALUATOR, ADMIN or SUPER_ADMIN.",
   security: [
     {
       Bearer: [],
@@ -49,6 +53,8 @@ export const getUserById = createRoute({
   method: "get",
   path: "/{id}",
   tags: ["Users"],
+  description:
+    "Fetches the user with specified ID from database. Can be accessed by EVALUATOR, ADMIN, SUPER_ADMIN.",
   security: [
     {
       Bearer: [],
@@ -84,6 +90,8 @@ export const getAllUsers = createRoute({
   method: "get",
   path: "/all",
   tags: ["Users"],
+  description:
+    "Fetches a list of all users from the database. Can be accessed only by ADMIN and SUPER_ADMIN.",
   security: [
     {
       Bearer: [],
@@ -108,6 +116,8 @@ export const deleteUserById = createRoute({
   method: "delete",
   path: "/{id}",
   tags: ["Users"],
+  description:
+    "Deletes user with specified ID from the database. Can be accessed only by ADMIN and SUPER_ADMIN.",
   security: [
     {
       Bearer: [],
@@ -138,6 +148,8 @@ export const promoteUser = createRoute({
   method: "post",
   path: "/promote/{id}",
   tags: ["Users"],
+  description:
+    "Promote user with specified ID to a specified role. Can be accessed only by SUPER_ADMIN",
   security: [
     {
       Bearer: [],
@@ -177,6 +189,8 @@ export const updateUser = createRoute({
   method: "post",
   path: "/{id}",
   tags: ["Users"],
+  description:
+    "Update the user with specified ID. Can be accessed by ADMIN, SUPER_ADMIN and the USER authenticated with the same ID.",
   security: [
     {
       Bearer: [],

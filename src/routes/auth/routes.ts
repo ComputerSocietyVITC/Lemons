@@ -5,6 +5,8 @@ export const login = createRoute({
   method: "post",
   path: "/login",
   tags: ["Auth"],
+  description:
+    "Responds with the JWT access token. Can be accessed unauthenticated.",
   request: {
     body: {
       content: {
@@ -55,6 +57,7 @@ export const register = createRoute({
   method: "post",
   path: "/register",
   tags: ["Auth"],
+  description: "Registers a user account. Can be accessed unauthenticated.",
   request: {
     body: {
       content: {
