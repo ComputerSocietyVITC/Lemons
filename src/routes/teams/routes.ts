@@ -96,7 +96,7 @@ export const leaveTeam = createRoute({
 
 export const removeUser = createRoute({
   method: "delete",
-  path: "/{id}/remove",
+  path: "/remove",
   tags: ["Teams"],
   description:
     "Removes a user with specified id from whatever team he is a part of. Can be accessed by ADMIN, SUPER_ADMIN and USER who is the leader of the specified user's team.",
