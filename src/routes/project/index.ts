@@ -6,11 +6,37 @@ import {
   getProject,
   updateProject,
   deleteProject,
+  getCurrentProject,
 } from "./routes.js";
 import { checkRole, getCurrentUser } from "../../lib/auth-provider.js";
 import { Role, Prisma } from "@prisma/client";
 
 const projectRouter = new OpenAPIHono();
+
+projectRouter.openapi(getCurrentProject, async (ctx) => {
+  if (!checkRole(["USER"], ctx)) {
+    return ctx.text("Forbidden", 403);
+  }
+  const user = await prisma.user.findUnique({
+    where: { id: getCurrentUser(ctx).userId },
+  });
+  if (!user) {
+    return ctx.text("User not found", 404);
+  }
+  if (!user.teamId) {
+    return ctx.text("User not a part of any team", 404);
+  }
+  const team = await prisma.team.findUnique({
+    where: { id: user.teamId },
+    include: {
+      project: true,
+    },
+  });
+  if (!team?.project) {
+    return ctx.text("User's team doesn't have any project", 404);
+  }
+  return ctx.json(team.project, 200);
+});
 
 projectRouter.openapi(createProject, async (ctx) => {
   const { name, description, teamId } = ctx.req.valid("json");

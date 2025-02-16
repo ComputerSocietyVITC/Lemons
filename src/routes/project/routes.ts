@@ -1,6 +1,38 @@
 import { z, createRoute } from "@hono/zod-openapi";
 import { ProjectSchema } from "../../schemas/project.js";
 
+export const getCurrentProject = createRoute({
+  method: "get",
+  path: "/",
+  tags: ["Projects"],
+  description:
+    "Fetches the project current user's team. Can be accessed by USER only.",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
+  responses: {
+    200: {
+      description: "Successfully retrieved project.",
+      content: {
+        "application/json": {
+          schema: ProjectSchema.openapi("ProjectResponse"),
+        },
+      },
+    },
+    403: {
+      description: "Forbidden. User does not have sufficient permissions.",
+    },
+    404: {
+      description: "Project not found.",
+    },
+    500: {
+      description: "Unexpected server error.",
+    },
+  },
+});
+
 export const getAllProjects = createRoute({
   method: "get",
   path: "/all",

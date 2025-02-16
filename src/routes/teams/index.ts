@@ -2,6 +2,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 
 import prisma from "../../lib/prisma-client.js";
 import {
+  getCurrentTeam,
   getAllTeams,
   getTeam,
   createTeam,
@@ -15,6 +16,28 @@ import { Prisma } from "@prisma/client";
 import { checkRole, getCurrentUser } from "../../lib/auth-provider.js";
 
 const teamRouter = new OpenAPIHono();
+
+teamRouter.openapi(getCurrentTeam, async (ctx) => {
+  if (!checkRole(["USER"], ctx)) {
+    return ctx.text("Forbidden", 403);
+  }
+  const user = await prisma.user.findUnique({
+    where: { id: getCurrentUser(ctx).userId },
+  });
+  if (!user) {
+    return ctx.text("User not found", 404);
+  }
+  if (!user.teamId) {
+    return ctx.text("User not a part of any team", 404);
+  }
+  const team = await prisma.team.findUnique({
+    where: { id: user.teamId },
+    include: {
+      members: true,
+    },
+  });
+  return ctx.json(team, 200);
+});
 
 teamRouter.openapi(createTeam, async (ctx) => {
   const { name, imageId } = ctx.req.valid("json");
