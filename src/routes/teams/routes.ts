@@ -1,6 +1,34 @@
 import { z, createRoute } from "@hono/zod-openapi";
 import { TeamSchema } from "../../schemas/team.js";
 
+export const getCurrentTeam = createRoute({
+  method: "get",
+  path: "/",
+  tags: ["Teams"],
+  description: "Gets the current user's team. Can be accessed by USER only.",
+  security: [
+    {
+      Bearer: [],
+    },
+  ],
+  responses: {
+    200: {
+      description: "Successfully retrieved team.",
+      content: {
+        "application/json": {
+          schema: TeamSchema.openapi("TeamResponse"),
+        },
+      },
+    },
+    403: {
+      description: "Forbidden. User does not have sufficient permissions.",
+    },
+    500: {
+      description: "Unexpected server error.",
+    },
+  },
+});
+
 export const getAllTeams = createRoute({
   method: "get",
   path: "/all",
