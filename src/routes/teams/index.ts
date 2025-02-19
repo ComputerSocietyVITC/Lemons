@@ -173,8 +173,11 @@ teamRouter.openapi(leaveTeam, async (ctx) => {
 });
 
 teamRouter.openapi(removeUser, async (ctx) => {
-  const id = ctx.req.param("id");
   const user = getCurrentUser(ctx);
+  const { userId } = ctx.req.valid("json");
+  const toRemove = await prisma.user.findUnique({
+    where: { id: userId },
+  });
   if (!checkRole(["SUPER_ADMIN", "ADMIN", "USER"], ctx)) {
     return ctx.text("Forbidden", 403);
   }
@@ -183,11 +186,10 @@ teamRouter.openapi(removeUser, async (ctx) => {
       where: { id: user.userId },
       include: { team: true },
     });
-    if (id !== fetchedUser?.team?.id || !fetchedUser?.isLeader) {
+    if (toRemove?.teamId !== fetchedUser?.team?.id || !fetchedUser?.isLeader) {
       return ctx.text("Forbidden", 403);
     }
   }
-  const { userId } = ctx.req.valid("json");
   await prisma.user.update({
     where: { id: userId },
     data: {
