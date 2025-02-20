@@ -100,7 +100,7 @@ export const getEvaluationById = createRoute({
   path: "/{id}",
   tags: ["Evaluations"],
   description:
-    "Fetches evaluation with specified ID. Can be accessed by ADMIN, SUPER_ADMIN and EVALUATOR.",
+    "Fetches evaluation with project specified ID. Can be accessed by ADMIN, SUPER_ADMIN and EVALUATOR.",
   security: [
     {
       Bearer: [],
