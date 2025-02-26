@@ -38,7 +38,7 @@ model User {
 
   team   Team?   @relation(fields: [teamId], references: [id])
   teamId String?
-  evaluations Evaluation?
+  evaluations Evaluation[]
 
 }
 
