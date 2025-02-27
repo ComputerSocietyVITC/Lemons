@@ -28,18 +28,18 @@ model User {
   name String
   role Role
 
-  regNum  String  @unique
-  phone   String  @unique
-  college String
-  github  String? @unique
-  imageId String? @unique
+  regNum   String  @unique
+  phone    String  @unique
+  college  String
+  github   String? @unique
+  imageId  String? @unique
+  mimeType String?
 
   isLeader Boolean @default(false)
 
-  team   Team?   @relation(fields: [teamId], references: [id])
-  teamId String?
+  team        Team?        @relation(fields: [teamId], references: [id])
+  teamId      String?
   evaluations Evaluation[]
-
 }
 
 model Team {
@@ -47,8 +47,9 @@ model Team {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name    String  @unique
-  imageId String? @unique
+  name     String  @unique
+  imageId  String? @unique
+  mimeType String?
 
   members User[]
   project Project?
@@ -65,6 +66,7 @@ model Project {
   demoUrl     String? @unique
   reportUrl   String? @unique
   imageId     String? @unique
+  mimeType    String?
 
   team   Team   @relation(fields: [teamId], references: [id])
   teamId String @unique
@@ -77,13 +79,13 @@ model Evaluation {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user    User     @relation(fields: [userId], references: [id])
-  userId  String
-  project   Project @relation(fields: [projectId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  project   Project  @relation(fields: [projectId], references: [id])
   projectId String
 
   score Int @default(0)
-  
+
   @@unique([userId, projectId])
 }
 

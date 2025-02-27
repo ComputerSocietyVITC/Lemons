@@ -14,6 +14,7 @@ export const ProjectSchema = z.object({
     .string()
     .optional()
     .openapi({ example: "123e4567-e89b-12d3-a456-426614174000" }),
+  mimeType: z.string().optional().openapi({ example: "png" }),
   teamId: z
     .string()
     .uuid()

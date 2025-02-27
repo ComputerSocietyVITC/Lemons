@@ -123,7 +123,7 @@ projectRouter.openapi(getProject, async (ctx) => {
 
 projectRouter.openapi(updateProject, async (ctx) => {
   const projectId = ctx.req.param("id");
-  const { name, description, repoUrl, demoUrl, reportUrl, imageId } =
+  const { name, description, repoUrl, demoUrl, reportUrl, imageId, mimeType } =
     ctx.req.valid("json");
 
   if (!checkRole([Role.SUPER_ADMIN, Role.ADMIN, Role.USER], ctx)) {
@@ -156,6 +156,7 @@ projectRouter.openapi(updateProject, async (ctx) => {
         demoUrl,
         reportUrl,
         imageId,
+        mimeType,
       },
     });
     return ctx.json(updatedProject, 200);

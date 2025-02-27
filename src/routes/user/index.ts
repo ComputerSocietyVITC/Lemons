@@ -86,7 +86,7 @@ userRouter.openapi(updateUser, async (ctx) => {
   if (!checkRole([Role.ADMIN, Role.SUPER_ADMIN], ctx) && id !== uid) {
     return ctx.text("Forbidden", 403);
   }
-  const { name, regNum, phone, college, github, imageId } =
+  const { name, regNum, phone, college, github, imageId, mimeType } =
     ctx.req.valid("json");
   try {
     await prisma.user.update({
@@ -100,6 +100,7 @@ userRouter.openapi(updateUser, async (ctx) => {
         college,
         github,
         imageId,
+        mimeType,
       },
     });
   } catch (e) {
