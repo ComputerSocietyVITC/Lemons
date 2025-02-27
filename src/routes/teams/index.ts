@@ -40,7 +40,7 @@ teamRouter.openapi(getCurrentTeam, async (ctx) => {
 });
 
 teamRouter.openapi(createTeam, async (ctx) => {
-  const { name, imageId } = ctx.req.valid("json");
+  const { name, imageId, mimeType } = ctx.req.valid("json");
   if (!checkRole(["SUPER_ADMIN", "ADMIN", "USER"], ctx)) {
     return ctx.text("Forbidden", 403);
   }
@@ -55,8 +55,9 @@ teamRouter.openapi(createTeam, async (ctx) => {
   }
   const team = await prisma.team.create({
     data: {
-      name: name,
-      imageId: imageId,
+      name,
+      imageId,
+      mimeType,
     },
     include: {
       members: true,

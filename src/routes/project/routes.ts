@@ -191,6 +191,7 @@ export const updateProject = createRoute({
             imageId: z.string().uuid().optional().openapi({
               example: "123e4567-e89b-12d3-a456-426614174000",
             }),
+            mimeType: z.string().optional().openapi({ example: "png" }),
           }),
         },
       },
